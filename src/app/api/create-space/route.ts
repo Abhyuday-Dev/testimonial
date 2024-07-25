@@ -2,7 +2,6 @@ import dbConnect from "@/lib/dbConnect";
 import { SpaceModel, UserModel } from "@/models/User";
 import mongoose from "mongoose";
 import { getServerSession } from "next-auth";
-
 import { z } from "zod";
 import { authOptions } from "../auth/[...nextauth]/option";
 
@@ -28,13 +27,12 @@ export async function POST(request: Request) {
     );
   }
 
-
   const user = session.user;
   const userId = new mongoose.Types.ObjectId(user._id);
 
   try {
     // Validate request body
-    const validatedData = spaceSchema.parse(requestBody);
+    const validatedData = spaceSchema.parse(requestBody) as z.infer<typeof spaceSchema>;
 
     // Create new space
     const newSpace = new SpaceModel(validatedData);
@@ -49,7 +47,12 @@ export async function POST(request: Request) {
       );
     }
 
-    userDoc.spaces.push(newSpace);
+    if (newSpace._id instanceof mongoose.Types.ObjectId) {
+      userDoc.spaces.push(newSpace._id);
+      await userDoc.save();
+    } else {
+      console.warn("New space ID is not a valid ObjectId");
+    }
     await userDoc.save();
 
     return new Response(

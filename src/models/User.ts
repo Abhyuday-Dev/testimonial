@@ -66,7 +66,7 @@ export interface User extends Document {
   email: string;
   password: string;
   googleId: string;
-  spaces: Space[];
+  spaces: mongoose.Types.ObjectId[];
 }
 
 const UserSchema: Schema<User> = new Schema({
