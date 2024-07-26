@@ -1,11 +1,38 @@
 import mongoose, { Schema, Document } from "mongoose";
 
-// Define the Space interface and schema
+// Define the Feedback interface and schema
 export interface Feedback extends Document {
+  name: string;
+  email: string;
   comment: string;
   rating: number;
+  imageURL: string;
 }
 
+const FeedbackSchema: Schema<Feedback> = new Schema({
+  name: {
+    type: String,
+    required: true,
+  },
+  email: {
+    type: String,
+    required: true,
+  },
+  imageURL: {
+    type: String,
+  },
+  comment: {
+    type: String,
+    required: true,
+  },
+  rating: {
+    type: Number,
+    min: 1,
+    max: 5,
+  },
+});
+
+// Define the Space interface and schema
 export interface Space extends Document {
   spaceName: string;
   spaceTitle: string;
@@ -15,19 +42,6 @@ export interface Space extends Document {
   theme: boolean;
   feedback: Feedback[];
 }
-
-const FeedbackSchema: Schema<Feedback> = new Schema({
-  comment: {
-    type: String,
-    required: true,
-  },
-  rating: {
-    type: Number,
-    required: true,
-    min: 1,
-    max: 5,
-  },
-});
 
 const SpaceSchema: Schema<Space> = new Schema({
   spaceName: {
@@ -66,7 +80,7 @@ export interface User extends Document {
   email: string;
   password: string;
   googleId: string;
-  spaces: mongoose.Types.ObjectId[];
+  spaces: { id: mongoose.Types.ObjectId; name: string }[]; // Modified to include both ID and name
 }
 
 const UserSchema: Schema<User> = new Schema({
@@ -92,13 +106,20 @@ const UserSchema: Schema<User> = new Schema({
     type: String,
   },
   spaces: [{
-    type: Schema.Types.ObjectId,
-    ref: "Space",
+    id: {
+      type: Schema.Types.ObjectId,
+      ref: "Space",
+      required: true,
+    },
+    name: {
+      type: String,
+      required: true,
+    },
   }],
 });
 
 // Create models
-const UserModel = (mongoose.models?.User as mongoose.Model<User>) || mongoose.model<User>("User", UserSchema);
-const SpaceModel = (mongoose.models?.Space as mongoose.Model<Space>) || mongoose.model<Space>("Space", SpaceSchema);
+const UserModel = mongoose.models.User || mongoose.model<User>("User", UserSchema);
+const SpaceModel = mongoose.models.Space || mongoose.model<Space>("Space", SpaceSchema);
 
 export { UserModel, SpaceModel };

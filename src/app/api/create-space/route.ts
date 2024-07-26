@@ -48,8 +48,7 @@ export async function POST(request: Request) {
     }
 
     if (newSpace._id instanceof mongoose.Types.ObjectId) {
-      userDoc.spaces.push(newSpace._id);
-      await userDoc.save();
+      userDoc.spaces.push({ id: newSpace._id, name: validatedData.spaceName });
     } else {
       console.warn("New space ID is not a valid ObjectId");
     }
