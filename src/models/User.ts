@@ -7,6 +7,8 @@ export interface Feedback extends Document {
   comment: string;
   rating: number;
   imageURL: string;
+  liked: boolean;
+  createdAt:Date;
 }
 
 const FeedbackSchema: Schema<Feedback> = new Schema({
@@ -30,6 +32,12 @@ const FeedbackSchema: Schema<Feedback> = new Schema({
     min: 1,
     max: 5,
   },
+  liked:{
+    type:Boolean,
+  },
+  createdAt:{
+    type:Date,
+  }
 });
 
 // Define the Space interface and schema

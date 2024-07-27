@@ -6,6 +6,8 @@ import axios from 'axios';
 import { Card } from '@/components/ui/card';
 import { Dot, PenIcon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import Modal from '@/components/app/Modal';
+import FeedbackForm from '@/components/app/FeedbackForm';
 
 // Define the Space interface to match the expected data
 interface Space {
@@ -23,6 +25,7 @@ const SpacePage = () => {
     const { username, spaceName } = useParams();
     const [space, setSpace] = useState<Space | null>(null);
     const [isDarkTheme, setIsDarkTheme] = useState(false);
+    const [isModalOpen, setIsModalOpen] = useState(false);
 
     useEffect(() => {
         const fetchSpace = async () => {
@@ -91,13 +94,14 @@ const SpacePage = () => {
                         </ul>
                     </div>
                     <div className="flex justify-center">
-                        <Button className="w-full bg-purple-800 hover:bg-purple-900 flex items-center justify-center font-bold text-lg">
+                        <Button className="w-full bg-purple-800 hover:bg-purple-900 flex items-center justify-center font-bold text-lg"  onClick={() => setIsModalOpen(true)}>
                             <PenIcon className="pr-2" size={22} /> Send in Text
                         </Button>
                     </div>
                 </div>
             </div>
         </div>
+        <FeedbackForm isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} questions={space.spaceQuestions} />
        </div>
     );
 };
