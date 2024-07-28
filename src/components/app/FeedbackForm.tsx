@@ -81,7 +81,7 @@ const FeedbackForm: React.FC<ModalProps> = ({ isOpen, onClose, questions }) => {
         className="absolute inset-0 bg-gray-800 opacity-50"
         onClick={onClose}
       ></div>
-      <div className="bg-white z-10 w-1/4 gap-10 p-6 md:pt-4 rounded">
+      <div className="bg-white z-10 w-1/4 gap-10 p-6 md:pt-4 rounded max-h-[90vh] overflow-y-auto">
         <h3 className="font-semibold text-xl text-gray-700 mb-6">
           Write text testimonial
         </h3>
