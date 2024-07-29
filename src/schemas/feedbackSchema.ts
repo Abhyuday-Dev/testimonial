@@ -1,15 +1,12 @@
 import { z } from "zod";
 
 export const feedbackSchema = z.object({
-    name: z.string(),
-    email: z.string(),
-    comment: z
+  name: z.string().min(1, { message: "Name is required" }),
+  email: z.string().email({ message: "Invalid email address" }),
+  comment: z
     .string()
-    .min(30, { message: "Content must be at least 10 characters" })
-    .max(300,{ message: "Content must be at most 300 characters" }),
-    rating: z.number(),
-    imageURL: z.string(),
-    liked: z.boolean(),
-    createdAt:z.date()
-  });
-  
+    .min(30, { message: "Comment must be at least 30 characters" })
+    .max(300, { message: "Comment must be at most 300 characters" }),
+});
+
+export type FeedbackSchema = z.infer<typeof feedbackSchema>;

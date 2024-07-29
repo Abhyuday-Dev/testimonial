@@ -1,5 +1,16 @@
 import React, { useState } from "react";
+import { Card } from "../ui/card";
 import { Button } from "../ui/button";
+import {
+  DeleteIcon,
+  Dot,
+  GripVertical,
+  Loader2,
+  PenIcon,
+  PlusCircleIcon,
+  Star,
+  Trash2,
+} from "lucide-react";
 import {
   Form,
   FormControl,
@@ -11,10 +22,15 @@ import {
 import { Input } from "../ui/input";
 import { useForm } from "react-hook-form";
 import { Textarea } from "../ui/textarea";
+import { Switch } from "../ui/switch";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { feedbackSchema } from "@/schemas/feedbackSchema";
-import { Dot, Star } from "lucide-react";
+import { ApiResponse } from "@/types/ApiResponse";
+import axios, { AxiosError } from "axios";
+import { toast } from "../ui/use-toast";
+import { spaceSchema } from "@/schemas/spaceSchema";
+import { feedbackSchema, FeedbackSchema } from "@/schemas/feedbackSchema";
+import { useParams } from "next/navigation";
 
 interface ModalProps {
   isOpen: boolean;
@@ -24,37 +40,67 @@ interface ModalProps {
 
 const FeedbackForm: React.FC<ModalProps> = ({ isOpen, onClose, questions }) => {
   if (!isOpen) return null;
-
-  const form = useForm<z.infer<typeof feedbackSchema>>({
-    resolver: zodResolver(feedbackSchema),
-    defaultValues: {},
-  });
-
-  const [isDarkTheme, setIsDarkTheme] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
-  const [isChecked, setIsChecked] = useState(false);
+  const isDarkTheme = false;
   const [starRating, setStarRating] = useState(0);
   const [hoverRating, setHoverRating] = useState(0);
+  const [isLoading, setIsLoading] = useState(false);
+  const [isChecked, setIsChecked] = useState(false);
   const [image, setImage] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string>("");
-
-  const onSubmit = async (data: z.infer<typeof feedbackSchema>) => {
-    const formData = new FormData();
-    formData.append("comment", data.comment);
-    formData.append("name", data.name);
-    formData.append("email", data.email);
-    formData.append("starRating", starRating.toString());
-    if (image) {
-      formData.append("image", image);
-    }
-    // Send formData to backend
-  };
 
   const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
       setImage(file);
       setImagePreview(URL.createObjectURL(file));
+    }
+  };
+
+  const form = useForm<FeedbackSchema>({
+    resolver: zodResolver(feedbackSchema),
+    defaultValues: {
+      name: "",
+      email: "",
+      comment: "",
+    },
+  });
+
+  const params = useParams<{ username: string; spaceName: string }>();
+  const username = params.username;
+  const spaceName = params.spaceName;
+
+  const onSubmit = async (data: FeedbackSchema) => {
+    console.log("onSubmit", data);
+    try {
+      const response = await axios.post<ApiResponse>("/api/send-feedback", {
+        name: data.name,
+        email: data.email,
+        comment: data.comment,
+        image: image,
+        starRating: starRating,
+        username: username,
+        spaceName: spaceName,
+      });
+
+      toast({
+        title: response.data.message,
+        variant: "default",
+      });
+      form.reset({
+        name: "",
+        email: "",
+        comment: "",
+      });
+    } catch (error) {
+      const axiosError = error as AxiosError<ApiResponse>;
+      toast({
+        title: "Error",
+        description:
+          axiosError.response?.data.message ?? "Failed to send message",
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -133,45 +179,47 @@ const FeedbackForm: React.FC<ModalProps> = ({ isOpen, onClose, questions }) => {
               ))}
             </div>
             <FormField
-              name="comment"
               control={form.control}
+              name="comment"
               render={({ field }) => (
                 <FormItem>
+                  <FormLabel>Comment</FormLabel>
                   <FormControl>
-                    <Textarea {...field} placeholder={getPlaceholder()} />
+                    <Textarea {...field} placeholder={getPlaceholder()}/>
                   </FormControl>
-                  <FormMessage />
                 </FormItem>
               )}
             />
+
             <FormField
-              name="name"
               control={form.control}
+              name="name"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Name</FormLabel>
                   <FormControl>
                     <Input {...field} />
                   </FormControl>
-                  <FormMessage />
                 </FormItem>
               )}
             />
+
             <FormField
-              name="email"
               control={form.control}
+              name="email"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Email</FormLabel>
                   <FormControl>
                     <Input {...field} />
                   </FormControl>
-                  <FormMessage />
                 </FormItem>
               )}
             />
 
-            <h4 className="mt-4 font-medium text-gray-700">Upload Your Photo</h4>
+            <h4 className="mt-4 font-medium text-gray-700">
+              Upload Your Photo
+            </h4>
 
             <div className="flex items-center mb-4 gap-4">
               <div
@@ -204,7 +252,7 @@ const FeedbackForm: React.FC<ModalProps> = ({ isOpen, onClose, questions }) => {
               </label>
             </div>
 
-            <div className="flex items-top space-x-2">
+            <div className="flex items-top space-x-2 mt-4">
               <input
                 type="checkbox"
                 id="terms"
@@ -220,7 +268,6 @@ const FeedbackForm: React.FC<ModalProps> = ({ isOpen, onClose, questions }) => {
                 and other marketing efforts
               </label>
             </div>
-
             <div className="flex space-x-4">
               <Button
                 onClick={onClose}

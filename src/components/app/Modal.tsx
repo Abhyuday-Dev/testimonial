@@ -122,7 +122,7 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose }) => {
         className="absolute inset-0 bg-gray-800 opacity-50"
         onClick={onClose}
       ></div>
-      <div className="relative bg-white z-10 w-3/4 max-h-[90vh] overflow-y-auto grid grid-cols-5 gap-10 p-10 md:pt-16 rounded">
+      <div className="relative bg-white z-10 w-4/6 max-h-[90vh] overflow-y-auto grid grid-cols-5 gap-10 p-10 md:pt-16 rounded">
         <div className="col-span-2">
           <Card
             className={`p-4 pt-10 pb-8 ${

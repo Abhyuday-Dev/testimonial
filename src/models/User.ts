@@ -1,4 +1,4 @@
-import mongoose, { Schema, Document } from "mongoose";
+import mongoose, { Schema, Document, model, models } from "mongoose";
 
 // Define the Feedback interface and schema
 export interface Feedback extends Document {
@@ -8,7 +8,7 @@ export interface Feedback extends Document {
   rating: number;
   imageURL: string;
   liked: boolean;
-  createdAt:Date;
+  createdAt: Date;
 }
 
 const FeedbackSchema: Schema<Feedback> = new Schema({
@@ -32,13 +32,16 @@ const FeedbackSchema: Schema<Feedback> = new Schema({
     min: 1,
     max: 5,
   },
-  liked:{
-    type:Boolean,
+  liked: {
+    type: Boolean,
   },
-  createdAt:{
-    type:Date,
-  }
+  createdAt: {
+    type: Date,
+  },
 });
+
+// Create the Feedback model
+const FeedbackModel = models.Feedback || model<Feedback>("Feedback", FeedbackSchema);
 
 // Define the Space interface and schema
 export interface Space extends Document {
@@ -88,7 +91,7 @@ export interface User extends Document {
   email: string;
   password: string;
   googleId: string;
-  spaces: { id: mongoose.Types.ObjectId; name: string }[]; // Modified to include both ID and name
+  spaces: { id: mongoose.Types.ObjectId; name: string }[];
 }
 
 const UserSchema: Schema<User> = new Schema({
@@ -127,7 +130,7 @@ const UserSchema: Schema<User> = new Schema({
 });
 
 // Create models
-const UserModel = mongoose.models.User || mongoose.model<User>("User", UserSchema);
-const SpaceModel = mongoose.models.Space || mongoose.model<Space>("Space", SpaceSchema);
+const UserModel = models.User || model<User>("User", UserSchema);
+const SpaceModel = models.Space || model<Space>("Space", SpaceSchema);
 
-export { UserModel, SpaceModel };
+export { UserModel, SpaceModel, FeedbackModel };
