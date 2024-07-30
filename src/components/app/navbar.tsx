@@ -11,8 +11,6 @@ function Navbar() {
 
   
   const user = session?.user;
-  console.log("user",user)// correctly destructuring the user
-
   return (
     <nav className="p-4 md:p-4   bg-gray-100 text-white">
       <div className="container mx-auto flex flex-col md:flex-row justify-between items-center">
