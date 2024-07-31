@@ -20,7 +20,7 @@ function Navbar() {
         {session ? (
           <>
             <span className="mr-4">
-              Welcome, {user?.name || 'User'} {/* You can customize the greeting with the user's name */}
+              Welcome, {user?.username || 'User'} {/* You can customize the greeting with the user's name */}
             </span>
             <Button onClick={() => signOut()} className="w-full md:w-auto bg-slate-100 text-black" variant='outline'>
               Logout

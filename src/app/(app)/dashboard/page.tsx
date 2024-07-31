@@ -11,10 +11,12 @@ import { PlusIcon } from 'lucide-react';
 import { useSession } from 'next-auth/react';
 
 const Dashboard: React.FC = () => {
-  const { data: session, status } = useSession();
+  const { data: session } = useSession();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [spaces, setSpaces] = useState([]);
   const { toast } = useToast();
+
+  const username = session?.user?.username || "";
 
   const fetchSpaces = useCallback(async () => {
     try {
@@ -39,6 +41,23 @@ const Dashboard: React.FC = () => {
   if (status === 'loading') {
     return <div>Loading...</div>;
   }
+
+  const handleDelete = async (id: string) => {
+    try {
+      await axios.delete(`/api/delete-space/${id}`);
+      setSpaces(spaces.filter((space) => space._id !== id));
+      toast({
+        title: 'Success',
+        description: 'Space deleted successfully',
+      });
+    } catch (error) {
+      toast({
+        title: 'Error',
+        description: 'Failed to delete space',
+        variant: 'destructive',
+      });
+    }
+  };
 
   const Tree = () => (
     <img className="text-subtle w-60 dark:invert" src="/tree.svg" alt="Tree" />
@@ -67,10 +86,12 @@ const Dashboard: React.FC = () => {
             {spaces.map((space) => (
               <SpaceCard
                 key={space._id}
-                id={space._id} 
+                id={space._id} // Pass id to SpaceCard
                 title={space.spaceName}
-                feedbackSize={space.feedback.length} // Adjust this to match your data structure
-                imageUrl="https://images-platform.99static.com//kkAEl8i2LzGXcQF2jN3icHhgtFA=/1766x2165:2788x3187/fit-in/500x500/projects-files/46/4623/462344/111b69c6-7bcd-44cf-a5f0-1a54d66aca3e.png" // Adjust this to match your data structure
+                feedbackSize={space.feedback.length}
+                imageUrl="https://images-platform.99static.com//kkAEl8i2LzGXcQF2jN3icHhgtFA=/1766x2165:2788x3187/fit-in/500x500/projects-files/46/4623/462344/111b69c6-7bcd-44cf-a5f0-1a54d66aca3e.png"
+                spaceName={space.spaceName}
+                onDelete={handleDelete}
               />
             ))}
           </div>
