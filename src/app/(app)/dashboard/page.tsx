@@ -9,6 +9,7 @@ import { useToast } from '@/components/ui/use-toast';
 import axios from 'axios';
 import { PlusIcon } from 'lucide-react';
 import { useSession } from 'next-auth/react';
+import FeedbackCard from '@/components/app/FeedbackCard';
 
 const Dashboard: React.FC = () => {
   const { data: session } = useSession();
@@ -102,6 +103,7 @@ const Dashboard: React.FC = () => {
           </div>
         )}
       </div>
+      <FeedbackCard />
       <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
     </div>
   );

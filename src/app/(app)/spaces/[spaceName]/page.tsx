@@ -7,6 +7,7 @@ import { useToast } from '@/components/ui/use-toast';
 import { useSession } from 'next-auth/react';
 import { Separator } from '@radix-ui/react-dropdown-menu';
 import { Button } from '@/components/ui/button';
+import FeedbackCard from '@/components/app/FeedbackCard';
 
 interface SpacePageProps {
     params: {
@@ -83,10 +84,10 @@ useEffect(() => {
 
      
       <Separator />
+      <FeedbackCard />
 
-      <div>
-        feedbacks
-      </div>
+     
+
      
     </div>
   );
