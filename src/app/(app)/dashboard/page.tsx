@@ -9,12 +9,26 @@ import { useToast } from '@/components/ui/use-toast';
 import axios from 'axios';
 import { PlusIcon } from 'lucide-react';
 import { useSession } from 'next-auth/react';
-import FeedbackCard from '@/components/app/FeedbackCard';
+
+interface Feedback {
+  _id: string;
+  comment: string;
+  rating: number;
+  submittedAt: string;
+  name: string;
+}
+
+interface Space {
+  _id: string;
+  spaceName: string;
+  feedback: Feedback[];
+}
+
 
 const Dashboard: React.FC = () => {
   const { data: session } = useSession();
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [spaces, setSpaces] = useState([]);
+  const [spaces, setSpaces] = useState<Space[]>([]);
   const { toast } = useToast();
 
   const username = session?.user?.username || "";
@@ -87,7 +101,7 @@ const Dashboard: React.FC = () => {
             {spaces.map((space) => (
               <SpaceCard
                 key={space._id}
-                id={space._id} // Pass id to SpaceCard
+                id={space._id}
                 title={space.spaceName}
                 feedbackSize={space.feedback.length}
                 imageUrl="https://images-platform.99static.com//kkAEl8i2LzGXcQF2jN3icHhgtFA=/1766x2165:2788x3187/fit-in/500x500/projects-files/46/4623/462344/111b69c6-7bcd-44cf-a5f0-1a54d66aca3e.png"
@@ -97,13 +111,12 @@ const Dashboard: React.FC = () => {
             ))}
           </div>
         ) : (
-          <div className="flex flex-col items-center justify-center h-64 ">
+          <div className="flex flex-col items-center justify-center h-64">
             <Tree />
             <p className="mt-6 text-lg text-gray-500 font-medium">No space yet, add a new one?</p>
           </div>
         )}
       </div>
-      <FeedbackCard />
       <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
     </div>
   );
