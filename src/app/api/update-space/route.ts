@@ -5,7 +5,7 @@ import { SpaceModel } from "@/models/User";
 export async function POST(request: Request) {
   await dbConnect();
   try {
-    const { spaceId, spaceTitle, spaceMessage, spaceQuestions, isCollectingStarRating, theme } = await request.json();
+    const { spaceId,spaceTitle, spaceMessage, spaceQuestions, isCollectingStarRating, theme } = await request.json();
 
     // Validate the required fields
     console.log(spaceId);

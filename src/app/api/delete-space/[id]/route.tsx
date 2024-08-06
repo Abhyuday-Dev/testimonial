@@ -1,7 +1,7 @@
 import dbConnect from "@/lib/dbConnect";
 import { getServerSession } from "next-auth";
 import { authOptions } from "../../auth/[...nextauth]/option";
-import { SpaceModel } from "@/models/User";
+import { SpaceModel, UserModel } from "@/models/User";
 
 export async function DELETE(request: Request, { params }: { params: { id: string } }) {
   await dbConnect();
@@ -21,8 +21,6 @@ export async function DELETE(request: Request, { params }: { params: { id: strin
     // Find the space by ID
     const space = await SpaceModel.findById(spaceId);
 
-    console.log(space);
-
     if (!space) {
       return new Response(
         JSON.stringify({ success: false, message: "Space not found" }),
@@ -30,10 +28,14 @@ export async function DELETE(request: Request, { params }: { params: { id: strin
       );
     }
 
-   
-
     // Delete the space
     await SpaceModel.findByIdAndDelete(spaceId);
+
+    // Remove space reference from all users
+    await UserModel.updateMany(
+      { "spaces.id": spaceId },
+      { $pull: { spaces: { id: spaceId } } }
+    );
 
     return new Response(
       JSON.stringify({ success: true, message: "Space deleted successfully" }),
