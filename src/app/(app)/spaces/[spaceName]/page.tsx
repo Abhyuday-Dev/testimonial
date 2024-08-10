@@ -48,6 +48,7 @@ const SpacePage: React.FC<SpacePageProps> = ({ params }) => {
   const profileUrl = `${baseUrl}/u/${username}/${spaceName}`;
 
   console.log("Profile URL: " ,spaceData?._id);
+  const id=spaceData?._id;
 
   useEffect(() => {
     const fetchSpace = async () => {
@@ -114,6 +115,7 @@ const SpacePage: React.FC<SpacePageProps> = ({ params }) => {
       <UpdateCard
         isOpen={isModalOpen}
         onClose={handleModalClose}
+        id={id}
          // Pass spaceId to UpdateCard
       />
     </div>

@@ -23,29 +23,30 @@ import { Textarea } from "../ui/textarea";
 import { Switch } from "../ui/switch";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { ApiResponse } from "@/types/ApiResponse";
 import axios, { AxiosError } from "axios";
 import { toast } from "../ui/use-toast";
 import { spaceSchema } from "@/schemas/spaceSchema";
+import { ApiResponse } from "@/types/ApiResponse";
+
+import { useRouter } from 'next/navigation';
 
 interface ModalProps {
   isOpen: boolean;
   onClose: () => void;
-  spaceName: string;
-  username: string;
+  id: string;
 }
 
-const UpdateCard: React.FC<ModalProps> = ({ isOpen, onClose, spaceName, username }) => {
-  if (!isOpen) return null;
-
+const UpdateCard: React.FC<ModalProps> = ({ isOpen, onClose, id }) => {
   const form = useForm<z.infer<typeof spaceSchema>>({
-    resolver: zodResolver(spaceSchema),});
+    resolver: zodResolver(spaceSchema),
+  });
 
   const { watch, handleSubmit, reset, control } = form;
 
   const [questions, setQuestions] = useState<string[]>([]);
   const [isDarkTheme, setIsDarkTheme] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const router = useRouter(); 
 
   // Fetch space details when the modal opens
   useEffect(() => {
@@ -53,9 +54,7 @@ const UpdateCard: React.FC<ModalProps> = ({ isOpen, onClose, spaceName, username
       const fetchSpaceDetails = async () => {
         setIsLoading(true);
         try {
-          const response = await axios.get(`/api/get-space`, {
-            params: { username, spaceName },
-          });
+          const response = await axios.get(`/api/get-space-info/${id}`);
           if (response.data.success) {
             const space = response.data.space;
             reset({
@@ -79,7 +78,8 @@ const UpdateCard: React.FC<ModalProps> = ({ isOpen, onClose, spaceName, username
           const axiosError = error as AxiosError<ApiResponse>;
           toast({
             title: "Error",
-            description: axiosError.response?.data.message ?? "Failed to fetch space details",
+            description:
+              axiosError.response?.data.message ?? "Failed to fetch space details",
             variant: "destructive",
           });
         } finally {
@@ -89,12 +89,12 @@ const UpdateCard: React.FC<ModalProps> = ({ isOpen, onClose, spaceName, username
 
       fetchSpaceDetails();
     }
-  }, [isOpen, username, spaceName, reset, toast]);
+  }, [isOpen, id, reset]);
 
   const onSubmit = async (data: z.infer<typeof spaceSchema>) => {
     setIsLoading(true);
     try {
-      const response = await axios.post<ApiResponse>("/api/update-space", {
+      const response = await axios.patch<ApiResponse>(`/api/update-space/${id}`, {
         spaceName: data.spaceName,
         spaceTitle: data.spaceTitle,
         spaceMessage: data.spaceMessage,
@@ -103,18 +103,20 @@ const UpdateCard: React.FC<ModalProps> = ({ isOpen, onClose, spaceName, username
         theme: data.theme,
       });
 
-      toast({
-        title: response.data.message,
-        variant: "default",
-      });
-      form.reset({
-        spaceName: "",
-        spaceTitle: "",
-        spaceMessage: "",
-        questions: [],
-        isCollectingStarRating: false,
-        theme: false,
-      });
+      if (response.data.success) {
+        toast({
+          title: "Space updated successfully",
+          variant: "default",
+        });
+        router.push(`/spaces/${data.spaceName}`);
+        onClose(); // Close the modal after successful update
+      } else {
+        toast({
+          title: "Error",
+          description: response.data.message,
+          variant: "destructive",
+        });
+      }
     } catch (error) {
       const axiosError = error as AxiosError<ApiResponse>;
       toast({
@@ -125,7 +127,6 @@ const UpdateCard: React.FC<ModalProps> = ({ isOpen, onClose, spaceName, username
       });
     } finally {
       setIsLoading(false);
-      onClose();
     }
   };
 
@@ -144,6 +145,8 @@ const UpdateCard: React.FC<ModalProps> = ({ isOpen, onClose, spaceName, username
     newQuestions[index] = value;
     setQuestions(newQuestions);
   };
+
+  if (!isOpen) return null;
 
   return (
     <div className="fixed inset-0 flex items-center justify-center z-50 h-full p-8">
@@ -281,7 +284,7 @@ const UpdateCard: React.FC<ModalProps> = ({ isOpen, onClose, spaceName, username
                     className="flex gap-2 text-sm cursor-pointer "
                     onClick={handleAddQuestion}
                   >
-                    <PlusCircleIcon size={18} /> Add one (upto 4)
+                    <PlusCircleIcon size={18} /> Add one (up to 4)
                   </div>
                 )}
               </div>
