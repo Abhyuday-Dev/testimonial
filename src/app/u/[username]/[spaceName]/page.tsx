@@ -8,17 +8,18 @@ import { Dot, PenIcon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import Modal from '@/components/app/Modal';
 import FeedbackForm from '@/components/app/FeedbackForm';
+import Loader from '@/components/app/Loader';
 
-// Define the Space interface to match the expected data
+
 interface Space {
   _id: string;
   spaceName: string;
   spaceTitle: string;
   spaceMessage: string;
-  spaceQuestions: string[]; // Updated to match the data structure
+  spaceQuestions: string[];
   isCollectingStarRating: boolean;
   theme: boolean;
-  feedback: any[]; // Adjust this according to your feedback structure
+  feedback: any[]; 
 }
 
 const SpacePage = () => {
@@ -53,7 +54,7 @@ const SpacePage = () => {
     }, [username, spaceName]);
 
     if (!space) {
-        return <p>Loading...</p>;
+        return <p><Loader /></p>;
     }
 
     return (

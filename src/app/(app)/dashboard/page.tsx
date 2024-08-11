@@ -9,6 +9,7 @@ import { useToast } from '@/components/ui/use-toast';
 import axios from 'axios';
 import { PlusIcon } from 'lucide-react';
 import { useSession } from 'next-auth/react';
+import Loader from '@/components/app/Loader';
 
 interface Feedback {
   _id: string;
@@ -37,7 +38,7 @@ const Dashboard: React.FC = () => {
     try {
       const response = await axios.get('/api/get-user-spaces');
       setSpaces(response.data.data);
-      console.log(response.data.data); // Assuming response.data.data contains the spaces array
+      // console.log(response.data.data); 
     } catch (error) {
       toast({
         title: 'Error',
@@ -54,7 +55,7 @@ const Dashboard: React.FC = () => {
   }, [session, fetchSpaces]);
 
   if (status === 'loading') {
-    return <div>Loading...</div>;
+    return <div><Loader /></div>;
   }
 
   const handleDelete = async (id: string) => {

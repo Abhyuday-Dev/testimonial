@@ -109,7 +109,7 @@ const UpdateCard: React.FC<ModalProps> = ({ isOpen, onClose, id }) => {
           variant: "default",
         });
         router.push(`/spaces/${data.spaceName}`);
-        onClose(); // Close the modal after successful update
+        onClose(); 
       } else {
         toast({
           title: "Error",

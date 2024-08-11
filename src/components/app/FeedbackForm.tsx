@@ -1,16 +1,6 @@
 import React, { useState } from "react";
-import { Card } from "../ui/card";
 import { Button } from "../ui/button";
-import {
-  DeleteIcon,
-  Dot,
-  GripVertical,
-  Loader2,
-  PenIcon,
-  PlusCircleIcon,
-  Star,
-  Trash2,
-} from "lucide-react";
+import { Star, Dot, Loader2, Asterisk } from "lucide-react";
 import {
   Form,
   FormControl,
@@ -22,13 +12,11 @@ import {
 import { Input } from "../ui/input";
 import { useForm } from "react-hook-form";
 import { Textarea } from "../ui/textarea";
-import { Switch } from "../ui/switch";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { ApiResponse } from "@/types/ApiResponse";
 import axios, { AxiosError } from "axios";
 import { toast } from "../ui/use-toast";
-import { spaceSchema } from "@/schemas/spaceSchema";
 import { feedbackSchema, FeedbackSchema } from "@/schemas/feedbackSchema";
 import { useParams } from "next/navigation";
 
@@ -38,9 +26,10 @@ interface ModalProps {
   questions: string[];
 }
 
+// Add a default value for each field in feedbackSchema to ensure fields are required
 const FeedbackForm: React.FC<ModalProps> = ({ isOpen, onClose, questions }) => {
   if (!isOpen) return null;
-  const isDarkTheme = false;
+
   const [starRating, setStarRating] = useState(0);
   const [hoverRating, setHoverRating] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
@@ -70,7 +59,7 @@ const FeedbackForm: React.FC<ModalProps> = ({ isOpen, onClose, questions }) => {
   const spaceName = params.spaceName;
 
   const onSubmit = async (data: FeedbackSchema) => {
-    console.log("onSubmit", data);
+    setIsLoading(true);
     try {
       const response = await axios.post<ApiResponse>("/api/send-feedback", {
         name: data.name,
@@ -86,11 +75,11 @@ const FeedbackForm: React.FC<ModalProps> = ({ isOpen, onClose, questions }) => {
         title: response.data.message,
         variant: "default",
       });
-      form.reset({
-        name: "",
-        email: "",
-        comment: "",
-      });
+      form.reset();
+      setImage(null);
+      setImagePreview("");
+      setIsChecked(false);
+      setStarRating(0);
     } catch (error) {
       const axiosError = error as AxiosError<ApiResponse>;
       toast({
@@ -138,22 +127,10 @@ const FeedbackForm: React.FC<ModalProps> = ({ isOpen, onClose, questions }) => {
           />
         </div>
         <div className="flex flex-col items-start justify-start ml-2 mb-8">
-          <h2
-            className={`text-xl font-semibold ${
-              isDarkTheme ? "text-gray-200" : "text-gray-800"
-            }`}
-          >
-            Questions
-          </h2>
-
+          <h2 className="text-xl font-semibold text-gray-800">Questions</h2>
           <ul className="text-gray-700">
             {questions.map((question, index) => (
-              <li
-                className={`text-sm flex text-semibold ${
-                  isDarkTheme ? "text-gray-300" : "text-gray-700"
-                }`}
-                key={index}
-              >
+              <li className="text-sm flex text-semibold text-gray-700" key={index}>
                 <Dot />
                 {question}
               </li>
@@ -185,8 +162,9 @@ const FeedbackForm: React.FC<ModalProps> = ({ isOpen, onClose, questions }) => {
                 <FormItem>
                   <FormLabel>Comment</FormLabel>
                   <FormControl>
-                    <Textarea {...field} placeholder={getPlaceholder()}/>
+                    <Textarea {...field} placeholder={getPlaceholder()} />
                   </FormControl>
+                  <FormMessage />
                 </FormItem>
               )}
             />
@@ -200,6 +178,7 @@ const FeedbackForm: React.FC<ModalProps> = ({ isOpen, onClose, questions }) => {
                   <FormControl>
                     <Input {...field} />
                   </FormControl>
+                  <FormMessage />
                 </FormItem>
               )}
             />
@@ -213,13 +192,12 @@ const FeedbackForm: React.FC<ModalProps> = ({ isOpen, onClose, questions }) => {
                   <FormControl>
                     <Input {...field} />
                   </FormControl>
+                  <FormMessage />
                 </FormItem>
               )}
             />
 
-            <h4 className="mt-4 font-medium text-gray-700">
-              Upload Your Photo
-            </h4>
+            <h4 className="mt-4 font-medium text-gray-700">Upload Your Photo</h4>
 
             <div className="flex items-center mb-4 gap-4">
               <div
@@ -268,6 +246,7 @@ const FeedbackForm: React.FC<ModalProps> = ({ isOpen, onClose, questions }) => {
                 and other marketing efforts
               </label>
             </div>
+
             <div className="flex space-x-4">
               <Button
                 onClick={onClose}
@@ -277,10 +256,10 @@ const FeedbackForm: React.FC<ModalProps> = ({ isOpen, onClose, questions }) => {
               </Button>
               <Button
                 type="submit"
-                disabled={!isChecked}
+                disabled={isLoading || !isChecked}
                 className="mt-4 bg-purple-800"
               >
-                Send
+                {isLoading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : "Send"}
               </Button>
             </div>
           </form>
