@@ -1,5 +1,5 @@
 import React from "react";
-import { Heart, StarIcon,Trash2 } from "lucide-react";
+import { Heart, StarIcon, Trash2 } from "lucide-react";
 import {
   Accordion,
   AccordionContent,
@@ -12,17 +12,19 @@ interface Feedback {
   comment: string;
   rating: number;
   createdAt: string;
+  liked: boolean;
+  _id: string;
 }
 
 interface FeedbackCardProps {
   feedback: Feedback;
-  spaceName: string;
+  onDelete: () => void; 
+  onLike:()=>void;
 }
 
-const FeedbackCard: React.FC<FeedbackCardProps> = ({ feedback }) => {
-  const { name, comment, rating, createdAt } = feedback;
+const FeedbackCard: React.FC<FeedbackCardProps> = ({ feedback, onDelete,onLike }) => {
+  const { name, comment, rating, createdAt, liked } = feedback;
 
-  // Create an array with the length of the rating to render stars
   const stars = Array(rating).fill(0);
 
   return (
@@ -32,7 +34,12 @@ const FeedbackCard: React.FC<FeedbackCardProps> = ({ feedback }) => {
           Feedback
         </h4>
         <div className="flex gap-2">
-          <Heart color="red" />
+          <Heart
+            color="red"
+            fill={liked ? "red" : "white"}
+            className="hover:text-red-400"
+            onClick={onLike}
+          />
         </div>
       </div>
       <div className="mb-6 flex flex-col gap-2">
@@ -52,18 +59,27 @@ const FeedbackCard: React.FC<FeedbackCardProps> = ({ feedback }) => {
           <h3 className="text-md font-medium text-gray-400">Submitted At</h3>
           <p className="text-sm">{new Date(createdAt).toLocaleString()}</p>
         </div>
-        
       </div>
-      <Accordion type="single" collapsible className="flex items-end justify-end">
-          <AccordionItem value="item-1" className="no-underline border-none">
-            <AccordionTrigger className="text-lg"></AccordionTrigger>
-            <AccordionContent className="">
-             <div className="flex gap-3 items-center justify-around">
-              <div className="flex gap-1 items-center justify-center font-semibold text-gray-700 hover:bg-gray-200 cursor-pointer p-1 hover:rounded"><Trash2 color="gray" size={18}/>Delete</div>
-             </div>
-            </AccordionContent>
-          </AccordionItem>
-        </Accordion>
+      <Accordion
+        type="single"
+        collapsible
+        className="flex items-end justify-end"
+      >
+        <AccordionItem value="item-1" className="no-underline border-none">
+          <AccordionTrigger className="text-lg"></AccordionTrigger>
+          <AccordionContent className="">
+            <div className="flex gap-3 items-center justify-around">
+              <div
+                className="flex gap-1 items-center justify-center font-semibold text-gray-700 hover:bg-gray-200 cursor-pointer p-1 hover:rounded"
+                onClick={onDelete} 
+              >
+                <Trash2 color="gray" size={18} />
+                Delete
+              </div>
+            </div>
+          </AccordionContent>
+        </AccordionItem>
+      </Accordion>
     </div>
   );
 };

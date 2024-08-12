@@ -1,16 +1,14 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
 import axios from "axios";
 import { useToast } from "@/components/ui/use-toast";
 import { useSession } from "next-auth/react";
-
 import { Button } from "@/components/ui/button";
 import FeedbackCard from "@/components/app/FeedbackCard";
 import { MessageSquareText, PenIcon } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
-import UpdateCard from "@/components/app/UpdateCard"; // Import the modal component
+import UpdateCard from "@/components/app/UpdateCard";
 import Loader from "@/components/app/Loader";
 
 interface SpacePageProps {
@@ -24,12 +22,13 @@ interface Feedback {
   comment: string;
   rating: number;
   createdAt: string;
+  liked: boolean;
+  _id: string;
 }
 
 interface SpaceData {
   _id: string;
   feedback: Feedback[];
-  spaceId: string; 
   spaceName: string;
   spaceTitle: string;
   spaceMessage: string;
@@ -40,16 +39,13 @@ interface SpaceData {
 
 const SpacePage: React.FC<SpacePageProps> = ({ params }) => {
   const { spaceName } = params;
-  const router = useRouter();
   const [spaceData, setSpaceData] = useState<SpaceData | null>(null);
-  const [isModalOpen, setIsModalOpen] = useState(false); 
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const { toast } = useToast();
   const { data: session } = useSession();
   const username = session?.user?.username || "";
   const baseUrl = `${window.location.protocol}//${window.location.host}`;
   const profileUrl = `${baseUrl}/u/${username}/${spaceName}`;
-
-  const id = spaceData?._id;
 
   useEffect(() => {
     const fetchSpace = async () => {
@@ -89,6 +85,52 @@ const SpacePage: React.FC<SpacePageProps> = ({ params }) => {
 
   const handleModalClose = () => {
     setIsModalOpen(false);
+  };
+
+  // Function to delete feedback
+  const handleFeedbackDelete = async (id: string) => {
+    try {
+      await axios.delete(`/api/delete-feedback/${id}`, {
+        data: { spaceId: spaceData?._id },
+      });
+
+      // Remove the deleted feedback from state
+      setSpaceData({
+        ...spaceData,
+        feedback: spaceData.feedback.filter((feedback) => feedback._id !== id),
+      });
+
+      toast({
+        title: "Success",
+        description: "Feedback deleted successfully",
+      });
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to delete feedback",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const handleFeedbackLike = async (id: string) => {
+    try {
+      await axios.patch(`/api/feedback-like/${id}`, {
+        data: { spaceId: spaceData?._id },
+      });
+      
+
+      toast({
+        title: "Success",
+        description: "Updated like status",
+      });
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to update like status",
+        variant: "destructive",
+      });
+    }
   };
 
   return (
@@ -131,7 +173,12 @@ const SpacePage: React.FC<SpacePageProps> = ({ params }) => {
       </div>
       <div className="flex flex-col p-20 gap-6">
         {spaceData.feedback.map((feedback, index) => (
-          <FeedbackCard key={index} feedback={feedback} spaceName={spaceName} />
+          <FeedbackCard
+            key={index}
+            feedback={feedback}
+            onDelete={() => handleFeedbackDelete(feedback._id)} // Pass the delete handler
+            onLike={() => handleFeedbackLike(feedback._id)} // Pass the delete handler
+          />
         ))}
       </div>
       <UpdateCard
