@@ -20,9 +20,9 @@ export async function PATCH(
 
   try {
     const feedbackId = params.id;
-    const spaceId = await request.json();
+    const { spaceId } = await request.json();
 
-    const space = await SpaceModel.findOne(spaceId);
+    const space = await SpaceModel.findById(spaceId);
 
     if (!space) {
       return new Response(

@@ -1,11 +1,22 @@
 import React from "react";
-import { Heart, StarIcon, Trash2 } from "lucide-react";
+import { Heart, StarIcon, Trash2, TriangleAlert } from "lucide-react";
 import {
   Accordion,
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 
 interface Feedback {
   name: string;
@@ -69,13 +80,36 @@ const FeedbackCard: React.FC<FeedbackCardProps> = ({ feedback, onDelete,onLike }
           <AccordionTrigger className="text-lg"></AccordionTrigger>
           <AccordionContent className="">
             <div className="flex gap-3 items-center justify-around">
-              <div
+             
+              <AlertDialog>
+                <AlertDialogTrigger >
+                <div
                 className="flex gap-1 items-center justify-center font-semibold text-gray-700 hover:bg-gray-200 cursor-pointer p-1 hover:rounded"
-                onClick={onDelete} 
               >
                 <Trash2 color="gray" size={18} />
                 Delete
               </div>
+                </AlertDialogTrigger>
+                <AlertDialogContent>
+                  <AlertDialogHeader className="mb-8">
+                    <AlertDialogTitle className="font-bold text-3xl text-center mb-6">
+                      Delete this testimonial
+                    </AlertDialogTitle>
+                    <AlertDialogDescription className="text-center text-lg">
+                    Once confirmed, this testimonial will be permanently removed.
+                    </AlertDialogDescription>
+                  </AlertDialogHeader>
+                  <AlertDialogFooter>
+                    <AlertDialogCancel>Cancel</AlertDialogCancel>
+                    <AlertDialogAction
+                      className="bg-red-700 hover:bg-red-800"
+                      onClick={onDelete}
+                    >
+                      Confirm 
+                    </AlertDialogAction>
+                  </AlertDialogFooter>
+                </AlertDialogContent>
+              </AlertDialog>
             </div>
           </AccordionContent>
         </AccordionItem>

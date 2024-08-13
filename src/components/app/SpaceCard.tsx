@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import { Card } from "@/components/ui/card";
 import { Cog, Link as LinkIcon, PenIcon, TriangleAlert } from "lucide-react";
 import {
@@ -21,6 +21,7 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import Link from 'next/link';
+import UpdateCard from "./UpdateCard";
 
 interface SpaceCardProps {
   title: string;
@@ -43,6 +44,14 @@ export const SpaceCard: React.FC<SpaceCardProps> = ({
     onDelete(id);
   };
 
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const handleModalOpen = () => {
+    setIsModalOpen(true);
+  };
+
+  const handleModalClose = () => {
+    setIsModalOpen(false);
+  };
 
   return (
     <Card className="grid grid-cols-4 w-full md:w-[350px] border">
@@ -72,8 +81,8 @@ export const SpaceCard: React.FC<SpaceCardProps> = ({
               <Cog size={18} color="gray" />
             </DropdownMenuTrigger>
             <DropdownMenuContent className="bg-zinc-800 text-gray-100">
-              <DropdownMenuItem className="flex gap-2 cursor-pointer">
-                <PenIcon size={15} /> Edit Space
+              <DropdownMenuItem className="flex gap-2 cursor-pointer " onClick={handleModalOpen}>
+                <PenIcon size={15}  /> Edit Space
               </DropdownMenuItem>
               <AlertDialog>
                 <AlertDialogTrigger >
@@ -107,6 +116,11 @@ export const SpaceCard: React.FC<SpaceCardProps> = ({
             </DropdownMenuContent>
           </DropdownMenu>
         </div>
+        <UpdateCard
+        isOpen={isModalOpen}
+        onClose={handleModalClose}
+        id={id}
+      />
       </div>
     </Card>
   );

@@ -115,19 +115,38 @@ const SpacePage: React.FC<SpacePageProps> = ({ params }) => {
 
   const handleFeedbackLike = async (id: string) => {
     try {
-      await axios.patch(`/api/feedback-like/${id}`, {
-        data: { spaceId: spaceData?._id },
+      const response = await axios.patch(`/api/like-feedback/${id}`, {
+        spaceId: spaceData?._id,
       });
-      
 
-      toast({
-        title: "Success",
-        description: "Updated like status",
-      });
+      if (response.status === 200 && response.data.success) {
+        const updatedFeedback = spaceData?.feedback.map((feedback) => {
+          if (feedback._id === id) {
+            return {
+              ...feedback,
+              liked: !feedback.liked,
+            };
+          }
+          return feedback;
+        });
+
+        // Update the state with the modified feedback array
+        setSpaceData({
+          ...spaceData,
+          feedback: updatedFeedback,
+        });
+
+        toast({
+          title: "Success",
+          description: "Feedback liked status updated successfully",
+        });
+      } else {
+        throw new Error("Failed to update like status");
+      }
     } catch (error) {
       toast({
         title: "Error",
-        description: "Failed to update like status",
+        description: "Failed to update feedback like status",
         variant: "destructive",
       });
     }
@@ -176,8 +195,8 @@ const SpacePage: React.FC<SpacePageProps> = ({ params }) => {
           <FeedbackCard
             key={index}
             feedback={feedback}
-            onDelete={() => handleFeedbackDelete(feedback._id)} // Pass the delete handler
-            onLike={() => handleFeedbackLike(feedback._id)} // Pass the delete handler
+            onDelete={() => handleFeedbackDelete(feedback._id)}
+            onLike={() => handleFeedbackLike(feedback._id)}
           />
         ))}
       </div>
