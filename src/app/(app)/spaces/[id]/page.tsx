@@ -13,7 +13,7 @@ import Loader from "@/components/app/Loader";
 
 interface SpacePageProps {
   params: {
-    spaceName: string;
+    id: string;
   };
 }
 
@@ -38,20 +38,20 @@ interface SpaceData {
 }
 
 const SpacePage: React.FC<SpacePageProps> = ({ params }) => {
-  const { spaceName } = params;
+  const { id } = params;
   const [spaceData, setSpaceData] = useState<SpaceData | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const { toast } = useToast();
   const { data: session } = useSession();
   const username = session?.user?.username || "";
   const baseUrl = `${window.location.protocol}//${window.location.host}`;
-  const profileUrl = `${baseUrl}/u/${username}/${spaceName}`;
+  const profileUrl = `${baseUrl}/u/${username}/${spaceData?.spaceName}`;
 
   useEffect(() => {
     const fetchSpace = async () => {
       try {
         const response = await axios.get("/api/get-space", {
-          params: { username, spaceName },
+          params: { username,id  },
         });
         if (response.status === 200) {
           const data = response.data;
@@ -69,7 +69,7 @@ const SpacePage: React.FC<SpacePageProps> = ({ params }) => {
       }
     };
     fetchSpace();
-  }, [username, spaceName]);
+  }, [username, id]);
 
   if (!spaceData) {
     return (
@@ -163,7 +163,7 @@ const SpacePage: React.FC<SpacePageProps> = ({ params }) => {
             className="w-[55px] h-20 rounded-md"
           />
           <div className="flex flex-col gap-2">
-            <h2 className="text-3xl font-bold">{spaceName}</h2>
+            <h2 className="text-3xl font-bold">{spaceData?.spaceName}</h2>
             <p className="text-sm text-gray-500">
               Space Public URL :{" "}
               <a href={profileUrl} className="underline">

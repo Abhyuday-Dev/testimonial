@@ -28,6 +28,8 @@ import { ApiResponse } from "@/types/ApiResponse";
 import axios, { AxiosError } from "axios";
 import { toast } from "../ui/use-toast";
 import { spaceSchema } from "@/schemas/spaceSchema";
+import { useRouter } from "next/navigation";
+
 
 interface ModalProps {
   isOpen: boolean;
@@ -36,6 +38,8 @@ interface ModalProps {
 
 const Modal: React.FC<ModalProps> = ({ isOpen, onClose }) => {
   if (!isOpen) return null;
+
+  const router=useRouter();
 
   const form = useForm<z.infer<typeof spaceSchema>>({
     resolver: zodResolver(spaceSchema),
@@ -87,6 +91,7 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose }) => {
         isCollectingStarRating: false,
         theme: false,
       });
+      router.push("/dashboard")
     } catch (error) {
       const axiosError = error as AxiosError<ApiResponse>;
       toast({

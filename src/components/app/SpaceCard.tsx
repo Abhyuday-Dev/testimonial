@@ -22,6 +22,8 @@ import {
 } from "@/components/ui/alert-dialog";
 import Link from 'next/link';
 import UpdateCard from "./UpdateCard";
+import { useSession } from "next-auth/react";
+import { useToast } from "../ui/use-toast";
 
 interface SpaceCardProps {
   title: string;
@@ -40,23 +42,40 @@ export const SpaceCard: React.FC<SpaceCardProps> = ({
   id,
   onDelete,
 }) => {
-  const handleDelete = () => {
-    onDelete(id);
-  };
+
+  const {data:session}=useSession();
+  const {toast}=useToast();
+ 
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const handleModalOpen = () => {
     setIsModalOpen(true);
+  };
+  const handleDelete = () => {
+    onDelete(id);
   };
 
   const handleModalClose = () => {
     setIsModalOpen(false);
   };
 
+  const {username}=session?.user || "";
+  const baseUrl = `${window.location.protocol}//${window.location.host}`;
+  const spaceUrl = `${baseUrl}/u/${username}/${spaceName}`;
+
+  const copyToClipboard = ()=>{
+    navigator.clipboard.writeText(spaceUrl)
+    toast({
+      title:"Copied URL",
+      description:"Space Url has been copied to clipboard",
+    })
+  }
+
+
   return (
     <Card className="grid grid-cols-4 w-full md:w-[350px] border">
       <div className="col-span-1 overflow-hidden rounded-l-lg">
-        <Link href={`/spaces/${spaceName}`} legacyBehavior>
+        <Link href={`/spaces/${id}`} legacyBehavior>
           <a>
             <img
               src={imageUrl}
@@ -67,7 +86,7 @@ export const SpaceCard: React.FC<SpaceCardProps> = ({
         </Link>
       </div>
       <div className="flex justify-between items-center border col-span-3 p-3">
-        <Link href={`/spaces/${spaceName}`} legacyBehavior>
+        <Link href={`/spaces/${id}`} legacyBehavior>
           <a className="flex-grow">
             <div className="pt-2 pb-2">
               <h2 className="text-lg text-gray-500">{title}</h2>
@@ -109,7 +128,7 @@ export const SpaceCard: React.FC<SpaceCardProps> = ({
                   </AlertDialogFooter>
                 </AlertDialogContent>
               </AlertDialog>
-              <DropdownMenuItem className="flex gap-2 cursor-pointer">
+              <DropdownMenuItem className="flex gap-2 cursor-pointer" onClick={copyToClipboard}>
                 <LinkIcon size={15} />
                 Get the link
               </DropdownMenuItem>

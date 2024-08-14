@@ -48,7 +48,7 @@ const FeedbackCard: React.FC<FeedbackCardProps> = ({ feedback, onDelete,onLike }
           <Heart
             color="red"
             fill={liked ? "red" : "white"}
-            className="hover:text-red-400"
+            className="hover:text-red-400 cursor-pointer"
             onClick={onLike}
           />
         </div>

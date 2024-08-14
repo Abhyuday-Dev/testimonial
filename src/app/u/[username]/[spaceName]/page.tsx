@@ -31,7 +31,7 @@ const SpacePage = () => {
     useEffect(() => {
         const fetchSpace = async () => {
             try {
-              const response = await axios.get('/api/get-space', {
+              const response = await axios.get('/api/get-link-space', {
                 params: { username, spaceName }
               });
               if (response.status === 200) {
