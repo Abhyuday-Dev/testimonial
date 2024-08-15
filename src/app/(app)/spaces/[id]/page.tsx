@@ -45,7 +45,7 @@ const SpacePage: React.FC<SpacePageProps> = ({ params }) => {
   const { data: session } = useSession();
   const username = session?.user?.username || "";
   const baseUrl = `${window.location.protocol}//${window.location.host}`;
-  const profileUrl = `${baseUrl}/u/${username}/${spaceData?.spaceName}`;
+  const profileUrl = `${baseUrl}/u/${username}/${spaceData?._id}`;
 
   useEffect(() => {
     const fetchSpace = async () => {

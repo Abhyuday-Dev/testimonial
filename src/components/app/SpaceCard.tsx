@@ -61,7 +61,7 @@ export const SpaceCard: React.FC<SpaceCardProps> = ({
 
   const {username}=session?.user || "";
   const baseUrl = `${window.location.protocol}//${window.location.host}`;
-  const spaceUrl = `${baseUrl}/u/${username}/${spaceName}`;
+  const spaceUrl = `${baseUrl}/u/${username}/${id}`;
 
   const copyToClipboard = ()=>{
     navigator.clipboard.writeText(spaceUrl)
