@@ -158,9 +158,9 @@ const SpacePage: React.FC<SpacePageProps> = ({ params }) => {
       <div className="flex justify-between p-4 pl-24 pr-24 bg-gray-100">
         <div className="flex gap-4">
           <img
-            src="https://img.freepik.com/free-photo/abstract-autumn-beauty-multi-colored-leaf-vein-pattern-generated-by-ai_188544-9871.jpg"
+            src="https://cdni.iconscout.com/illustration/premium/thumb/testimonials-3162025-2639391.png"
             alt=""
-            className="w-[55px] h-20 rounded-md"
+            className="w-[65px] h-20 rounded-md"
           />
           <div className="flex flex-col gap-2">
             <h2 className="text-3xl font-bold">{spaceData?.spaceName}</h2>

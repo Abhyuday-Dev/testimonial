@@ -123,207 +123,206 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose }) => {
 
   return (
     <div className="fixed inset-0 flex items-center justify-center z-50 h-full p-8">
-      <div
-        className="absolute inset-0 bg-gray-800 opacity-50"
-        onClick={onClose}
-      ></div>
-      <div className="relative bg-white z-10 w-3/6 max-h-[90vh] overflow-y-auto grid grid-cols-5 gap-10 p-10 md:pt-16 rounded">
-        <div className="col-span-2">
-          <Card
-            className={`p-4 pt-10 pb-8 ${
-              isDarkTheme ? "bg-[#25282c]" : "bg-white"
+  <div
+    className="absolute inset-0 bg-gray-800 opacity-50"
+    onClick={onClose}
+  ></div>
+  <div className="relative bg-white z-10 w-full md:w-3/6 max-h-[90vh] overflow-y-auto grid grid-cols-1 md:grid-cols-5 gap-10 p-10 md:pt-16 rounded">
+    <div className="col-span-1 md:col-span-2">
+      <Card
+        className={`p-4 pt-10 pb-8 ${
+          isDarkTheme ? "bg-[#25282c]" : "bg-white"
+        }`}
+      >
+        <div className="flex flex-col justify-center items-center">
+          <div className="mb-6">
+            <img
+              src="https://img.icons8.com/?size=100&id=IIX4dzpCp0YI&format=png&color=000000"
+              alt=""
+            />
+          </div>
+          <h1
+            className={`text-3xl font-bold mb-4 ${
+              isDarkTheme ? "text-gray-200" : "text-gray-700"
             }`}
           >
-            <div className="flex flex-col justify-center items-center">
-              <div className="mb-6">
-                <img
-                  src="https://img.icons8.com/?size=100&id=IIX4dzpCp0YI&format=png&color=000000"
-                  alt=""
-                />
-              </div>
-              <h1
-                className={`text-3xl font-bold mb-4 ${
-                  isDarkTheme ? "text-gray-200" : "text-gray-700"
-                }`}
-              >
-                {spaceTitle || "Header goes here..."}
-              </h1>
-              <p
-                className={`text-sm w-full text-center mb-8 ${
-                  isDarkTheme ? "text-gray-200" : "text-gray-500"
-                }`}
-              >
-                {spaceMessage || "Your custom message goes here..."}
-              </p>
-            </div>
-            <div className="flex flex-col items-start justify-start ml-2 mb-8">
-              <h2
-                className={`text-xl font-semibold ${
-                  isDarkTheme ? "text-gray-200" : "text-gray-800"
-                }`}
-              >
-                Questions
-              </h2>
-              <ul className="text-gray-700">
-                {questions.map((question, index) => (
-                  <li
-                    className={`text-sm flex text-semibold ${
-                      isDarkTheme ? "text-gray-300" : "text-gray-700"
-                    }`}
-                    key={index}
-                  >
-                    <Dot />
-                    {question}
-                  </li>
-                ))}
-              </ul>
-            </div>
-            <Button className="w-full mb-2 bg-purple-800 hover:bg-purple-800">
-              <PenIcon className="pr-3" size={10} /> Send in Text
-            </Button>
-          </Card>
-        </div>
-        <div className="col-span-3">
-          <h1 className="text-center text-3xl font-bold mb-4">
-            Create a new Space
+            {spaceTitle || "Header goes here..."}
           </h1>
-          <h3 className="text-gray-600 text-center mb-10">
-            After the Space is created, it will generate a dedicated page for
-            collecting testimonials.
-          </h3>
-          <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-              <FormField
-                control={form.control}
-                name="spaceName"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Space Name</FormLabel>
-                    <FormControl>
-                      <Input {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                name="spaceTitle"
-                control={form.control}
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Space Title</FormLabel>
-                    <FormControl>
-                      <Input {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                name="spaceMessage"
-                control={form.control}
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Space Message</FormLabel>
-                    <FormControl>
-                      <Textarea {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <div>
-                <h2 className="text-lg font-semibold mb-2">Questions</h2>
-
-                {questions.map((question, index) => (
-                  <div key={index} className="flex items-center mb-2">
-                    <GripVertical />
-                    <Input
-                      value={question}
-                      onChange={(e) =>
-                        handleQuestionChange(index, e.target.value)
-                      }
-                      className="mr-2"
-                    />
-                    <div
-                      onClick={() => handleDeleteQuestion(index)}
-                      className="hover:text-gray-600 cursor-pointer"
-                    >
-                      <Trash2
-                        size={20}
-                        color="gray"
-                        className="transition-colors duration-200"
-                      />
-                    </div>
-                  </div>
-                ))}
-                {questions.length < 4 && (
-                  <div
-                    className="flex gap-2 text-sm cursor-pointer "
-                    onClick={handleAddQuestion}
-                  >
-                    <PlusCircleIcon size={18} /> Add one (upto 4)
-                  </div>
-                )}
-              </div>
-
-              <div className="flex gap-12 items-center">
-                <FormField
-                  control={form.control}
-                  name="isCollectingStarRating"
-                  render={({ field }) => (
-                    <FormItem className="flex flex-col ">
-                      <div className="text-sm">Collect star ratings</div>
-                      <FormControl>
-                        <Switch
-                          checked={field.value}
-                          onCheckedChange={field.onChange}
-                        />
-                      </FormControl>
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="theme"
-                  render={({ field }) => (
-                    <FormItem className="flex flex-col ">
-                      <div className="text-sm">Choose a theme</div>
-                      <FormControl>
-                        <Switch
-                          checked={isDarkTheme}
-                          onCheckedChange={(value) => {
-                            field.onChange(value);
-                            setIsDarkTheme(value);
-                          }}
-                        />
-                      </FormControl>
-                    </FormItem>
-                  )}
-                />
-              </div>
-
-              <div>
-                {isLoading ? (
-                  <Button disabled className="w-full">
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    Please wait
-                  </Button>
-                ) : (
-                  <Button
-                    type="submit"
-                    disabled={isLoading}
-                    className="w-full bg-purple-800 hover:bg-purple-700"
-                  >
-                    Create New Space
-                  </Button>
-                )}
-              </div>
-            </form>
-          </Form>
+          <p
+            className={`text-sm w-full text-center mb-8 ${
+              isDarkTheme ? "text-gray-200" : "text-gray-500"
+            }`}
+          >
+            {spaceMessage || "Your custom message goes here..."}
+          </p>
         </div>
-      </div>
+        <div className="flex flex-col items-start justify-start ml-2 mb-8">
+          <h2
+            className={`text-xl font-semibold ${
+              isDarkTheme ? "text-gray-200" : "text-gray-800"
+            }`}
+          >
+            Questions
+          </h2>
+          <ul className="text-gray-700">
+            {questions.map((question, index) => (
+              <li
+                className={`text-sm flex text-semibold ${
+                  isDarkTheme ? "text-gray-300" : "text-gray-700"
+                }`}
+                key={index}
+              >
+                <Dot />
+                {question}
+              </li>
+            ))}
+          </ul>
+        </div>
+        <Button className="w-full mb-2 bg-purple-800 hover:bg-purple-800">
+          <PenIcon className="pr-3" size={10} /> Send in Text
+        </Button>
+      </Card>
     </div>
+    <div className="col-span-1 md:col-span-3">
+      <h1 className="text-center text-3xl font-bold mb-4">
+        Create a new Space
+      </h1>
+      <h3 className="text-gray-600 text-center mb-10">
+        After the Space is created, it will generate a dedicated page for
+        collecting testimonials.
+      </h3>
+      <Form {...form}>
+        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+          <FormField
+            control={form.control}
+            name="spaceName"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Space Name</FormLabel>
+                <FormControl>
+                  <Input {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            name="spaceTitle"
+            control={form.control}
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Space Title</FormLabel>
+                <FormControl>
+                  <Input {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            name="spaceMessage"
+            control={form.control}
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Space Message</FormLabel>
+                <FormControl>
+                  <Textarea {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <div>
+            <h2 className="text-lg font-semibold mb-2">Questions</h2>
+
+            {questions.map((question, index) => (
+              <div key={index} className="flex items-center mb-2">
+                <GripVertical />
+                <Input
+                  value={question}
+                  onChange={(e) => handleQuestionChange(index, e.target.value)}
+                  className="mr-2"
+                />
+                <div
+                  onClick={() => handleDeleteQuestion(index)}
+                  className="hover:text-gray-600 cursor-pointer"
+                >
+                  <Trash2
+                    size={20}
+                    color="gray"
+                    className="transition-colors duration-200"
+                  />
+                </div>
+              </div>
+            ))}
+            {questions.length < 4 && (
+              <div
+                className="flex gap-2 text-sm cursor-pointer "
+                onClick={handleAddQuestion}
+              >
+                <PlusCircleIcon size={18} /> Add one (upto 4)
+              </div>
+            )}
+          </div>
+
+          <div className="flex gap-12 items-center">
+            <FormField
+              control={form.control}
+              name="isCollectingStarRating"
+              render={({ field }) => (
+                <FormItem className="flex flex-col ">
+                  <div className="text-sm">Collect star ratings</div>
+                  <FormControl>
+                    <Switch
+                      checked={field.value}
+                      onCheckedChange={field.onChange}
+                    />
+                  </FormControl>
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="theme"
+              render={({ field }) => (
+                <FormItem className="flex flex-col ">
+                  <div className="text-sm">Choose a theme</div>
+                  <FormControl>
+                    <Switch
+                      checked={isDarkTheme}
+                      onCheckedChange={(value) => {
+                        field.onChange(value);
+                        setIsDarkTheme(value);
+                      }}
+                    />
+                  </FormControl>
+                </FormItem>
+              )}
+            />
+          </div>
+
+          <div>
+            {isLoading ? (
+              <Button disabled className="w-full">
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                Please wait
+              </Button>
+            ) : (
+              <Button
+                type="submit"
+                disabled={isLoading}
+                className="w-full bg-purple-800 hover:bg-purple-700"
+              >
+                Create New Space
+              </Button>
+            )}
+          </div>
+        </form>
+      </Form>
+    </div>
+  </div>
+</div>
+
   );
 };
 

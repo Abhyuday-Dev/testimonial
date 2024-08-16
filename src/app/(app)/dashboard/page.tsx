@@ -105,7 +105,7 @@ const Dashboard: React.FC = () => {
                 id={space._id}
                 title={space.spaceName}
                 feedbackSize={space.feedback.length}
-                imageUrl="https://images-platform.99static.com//kkAEl8i2LzGXcQF2jN3icHhgtFA=/1766x2165:2788x3187/fit-in/500x500/projects-files/46/4623/462344/111b69c6-7bcd-44cf-a5f0-1a54d66aca3e.png"
+                imageUrl="https://static.vecteezy.com/system/resources/previews/006/801/375/original/testimonial-illustration-exclusive-design-inspiration-vector.jpg"
                 spaceName={space.spaceName}
                 onDelete={handleDelete}
               />
