@@ -82,16 +82,16 @@ const Dashboard: React.FC = () => {
   return (
     <div className="my-8 mx-4 md:mx-8 lg:mx-auto p-6 rounded w-full max-w-6xl bg-gray-100">
       <h1 className="text-4xl font-semibold mb-6">Overview</h1>
-      <div className="mb-6 flex justify-between items-center md:mb-20">
+      <div className="mb-6 flex justify-between items-center md:mb-20 flex-wrap">
         <OverviewCard title="Spaces" extraData={spaces.length.toString()} />
         <OverviewCard title="Feedbacks" extraData="100" />
         <OverviewCard title="Plan" extraData="Free Plan: Upgrade Plan" />
       </div>
       <div className="mb-4 mt">
-        <div className="mb-4 flex justify-between mt-8">
-          <h1 className="text-4xl font-semibold mb-4">Spaces</h1>
+        <div className="mb-4 flex flex-col justify-between mt-8 md:flex-row">
+          <h1 className="text-2xl font-semibold mb-4 md:text-4xl" >Spaces</h1>
           <Button
-            className="bg-purple-800 font-semibold hover:bg-purple-700"
+            className="bg-purple-800 font-semibold hover:bg-purple-700 text-sm "
             onClick={() => setIsModalOpen(true)}
           >
             <PlusIcon size={20} className="mr-2 font-semibold" /> Create New Space

@@ -51,7 +51,7 @@ const SpacePage: React.FC<SpacePageProps> = ({ params }) => {
     const fetchSpace = async () => {
       try {
         const response = await axios.get("/api/get-space", {
-          params: { username,id  },
+          params: { username, id },
         });
         if (response.status === 200) {
           const data = response.data;
@@ -155,8 +155,8 @@ const SpacePage: React.FC<SpacePageProps> = ({ params }) => {
   return (
     <div className="rounded w-screen overflow-x-hidden">
       <Separator className="mb-6" />
-      <div className="flex justify-between p-4 pl-24 pr-24 bg-gray-100">
-        <div className="flex gap-4">
+      <div className="flex flex-col lg:flex-row justify-between p-4 pl-6 pr-6 lg:pl-24 lg:pr-24 bg-gray-100">
+        <div className="flex flex-col lg:flex-row gap-4">
           <img
             src="https://cdni.iconscout.com/illustration/premium/thumb/testimonials-3162025-2639391.png"
             alt=""
@@ -172,8 +172,9 @@ const SpacePage: React.FC<SpacePageProps> = ({ params }) => {
             </p>
           </div>
         </div>
-        <div className="flex gap-8">
-          <div className="flex flex-col gap-1 items-center">
+        {/* This section will be responsive, stacking below the URL in small screens */}
+        <div className="flex flex-col lg:flex-row gap-4 lg:gap-8 mt-4 lg:mt-0 items-start lg:items-center">
+          <div className="flex flex-col gap-1 items-start lg:items-center">
             <p className="flex items-center">
               <MessageSquareText size={18} className="mr-2 text-gray-700" />
               Text Credits
@@ -190,7 +191,7 @@ const SpacePage: React.FC<SpacePageProps> = ({ params }) => {
           </Button>
         </div>
       </div>
-      <div className="flex flex-col p-20 gap-6">
+      <div className="flex flex-col p-6 lg:p-20 gap-6">
         {spaceData.feedback.map((feedback, index) => (
           <FeedbackCard
             key={index}

@@ -2,16 +2,11 @@ import dbConnect from "@/lib/dbConnect";
 import { FeedbackModel, SpaceModel, UserModel } from "@/models/User";
 import mongoose from "mongoose";
 
-// Define the SpaceReference interface
-interface SpaceReference {
-    id: mongoose.Types.ObjectId;
-    name: string;
-}
-
 export async function POST(request: Request) {
   await dbConnect();
 
-  const { name, email, image, comment, starRating, username, spaceName } = await request.json();
+  const { name, email, image, comment, starRating, username, spaceId } = await request.json();
+  console.log("route", spaceId);
 
   try {
     const user = await UserModel.findOne({ username });
@@ -23,15 +18,8 @@ export async function POST(request: Request) {
       );
     }
 
-    const spaceRef = (user.spaces as SpaceReference[]).find(space => space.name === spaceName);
-    if (!spaceRef) {
-      return new Response(
-        JSON.stringify({ success: false, message: "Space not found for this user" }),
-        { status: 404 }
-      );
-    }
-
-    const space = await SpaceModel.findById(spaceRef.id).exec();
+    // Find the space by its ID
+    const space = await SpaceModel.findById(spaceId).exec();
     if (!space) {
       return new Response(
         JSON.stringify({ success: false, message: "Space details not found" }),
@@ -39,6 +27,7 @@ export async function POST(request: Request) {
       );
     }
 
+    // Create new feedback
     const feedback = new FeedbackModel({
       name,
       email,
@@ -49,6 +38,7 @@ export async function POST(request: Request) {
       createdAt: new Date(),
     });
 
+    // Add feedback to the space and save it
     space.feedback.push(feedback);
     await space.save();
 

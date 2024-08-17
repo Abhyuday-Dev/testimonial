@@ -54,9 +54,10 @@ const FeedbackForm: React.FC<ModalProps> = ({ isOpen, onClose, questions }) => {
     },
   });
 
-  const params = useParams<{ username: string; spaceName: string }>();
+  const params = useParams<{ username: string; spaceId: string }>();
   const username = params.username;
-  const spaceName = params.spaceName;
+  const spaceId = params.spaceId;
+  console.log(spaceId);
 
   const onSubmit = async (data: FeedbackSchema) => {
     setIsLoading(true);
@@ -68,7 +69,7 @@ const FeedbackForm: React.FC<ModalProps> = ({ isOpen, onClose, questions }) => {
         image: image,
         starRating: starRating,
         username: username,
-        spaceName: spaceName,
+        spaceId:spaceId ,
       });
 
       toast({
