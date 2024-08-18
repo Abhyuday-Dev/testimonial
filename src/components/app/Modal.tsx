@@ -127,7 +127,7 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose }) => {
     className="absolute inset-0 bg-gray-800 opacity-50"
     onClick={onClose}
   ></div>
-  <div className="relative bg-white z-10 w-full md:w-3/6 max-h-[90vh] overflow-y-auto grid grid-cols-1 md:grid-cols-5 gap-10 p-10 md:pt-16 rounded">
+  <div className="relative bg-white z-10 w-full md:w-4/6 max-h-[90vh] overflow-y-auto grid grid-cols-1 md:grid-cols-5 gap-10 p-10 md:pt-16 rounded">
     <div className="col-span-1 md:col-span-2">
       <Card
         className={`p-4 pt-10 pb-8 ${
@@ -142,7 +142,7 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose }) => {
             />
           </div>
           <h1
-            className={`text-3xl font-bold mb-4 ${
+            className={` text-sm md:text-3xl font-bold mb-4 ${
               isDarkTheme ? "text-gray-200" : "text-gray-700"
             }`}
           >
