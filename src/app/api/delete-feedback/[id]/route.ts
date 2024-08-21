@@ -3,6 +3,16 @@ import dbConnect from "@/lib/dbConnect";
 import { SpaceModel } from "@/models/User";
 import { getServerSession } from "next-auth";
 
+export interface Feedback {
+  _id: string;       
+  name: string;       
+  email: string;      
+  comment: string;   
+  rating: number;     
+  liked: boolean;     
+  createdAt: Date;    
+}
+
 export async function DELETE(
   request: Request,
   { params }: { params: { id: string } }
@@ -34,7 +44,7 @@ export async function DELETE(
 
     // Filter out the feedback that matches the feedbackId
     space.feedback = space.feedback.filter(
-      (feedback) => feedback._id.toString() !== feedbackId
+      (feedback:Feedback) => feedback._id.toString() !== feedbackId
     );
 
     // Save the updated space
