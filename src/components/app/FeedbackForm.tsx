@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Button } from "../ui/button";
-import { Star, Dot, Loader2, Asterisk } from "lucide-react";
+import { Star, Dot, Loader2 } from "lucide-react";
 import {
   Form,
   FormControl,
@@ -26,24 +26,14 @@ interface ModalProps {
   questions: string[];
 }
 
-// Add a default value for each field in feedbackSchema to ensure fields are required
 const FeedbackForm: React.FC<ModalProps> = ({ isOpen, onClose, questions }) => {
-  if (!isOpen) return null;
-
+  // Hooks must be called unconditionally
   const [starRating, setStarRating] = useState(0);
   const [hoverRating, setHoverRating] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
   const [isChecked, setIsChecked] = useState(false);
   const [image, setImage] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string>("");
-
-  const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (file) {
-      setImage(file);
-      setImagePreview(URL.createObjectURL(file));
-    }
-  };
 
   const form = useForm<FeedbackSchema>({
     resolver: zodResolver(feedbackSchema),
@@ -55,9 +45,16 @@ const FeedbackForm: React.FC<ModalProps> = ({ isOpen, onClose, questions }) => {
   });
 
   const params = useParams<{ username: string; spaceId: string }>();
-  const username = params.username;
-  const spaceId = params.spaceId;
-  console.log(spaceId);
+  const username = params?.username;
+  const spaceId = params?.spaceId;
+
+  const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      setImage(file);
+      setImagePreview(URL.createObjectURL(file));
+    }
+  };
 
   const onSubmit = async (data: FeedbackSchema) => {
     setIsLoading(true);
@@ -69,7 +66,7 @@ const FeedbackForm: React.FC<ModalProps> = ({ isOpen, onClose, questions }) => {
         image: image,
         starRating: starRating,
         username: username,
-        spaceId:spaceId ,
+        spaceId: spaceId,
       });
 
       toast({
@@ -110,6 +107,9 @@ const FeedbackForm: React.FC<ModalProps> = ({ isOpen, onClose, questions }) => {
         return "Write your feedback...";
     }
   };
+
+  // Early return based on isOpen after hooks are set
+  if (!isOpen) return null;
 
   return (
     <div className="fixed inset-0 flex items-center justify-center z-50 h-full p-8">

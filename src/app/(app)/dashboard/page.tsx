@@ -25,26 +25,28 @@ interface Space {
   feedback: Feedback[];
 }
 
-
 const Dashboard: React.FC = () => {
-  const { data: session } = useSession();
+  const { data: session, status } = useSession();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [spaces, setSpaces] = useState<Space[]>([]);
   const { toast } = useToast();
+  const [loading, setLoading] = useState(true);
 
   const username = session?.user?.username || "";
 
   const fetchSpaces = useCallback(async () => {
+    setLoading(true);
     try {
       const response = await axios.get('/api/get-user-spaces');
       setSpaces(response.data.data);
-      // console.log(response.data.data); 
     } catch (error) {
       toast({
         title: 'Error',
         description: 'Failed to fetch spaces',
         variant: 'destructive',
       });
+    } finally {
+      setLoading(false);
     }
   }, [toast]);
 
@@ -54,8 +56,8 @@ const Dashboard: React.FC = () => {
     }
   }, [session, fetchSpaces]);
 
-  if (status === 'loading') {
-    return <div><Loader /></div>;
+  if (status === 'loading' || loading) {
+    return <Loader />;
   }
 
   const handleDelete = async (id: string) => {
