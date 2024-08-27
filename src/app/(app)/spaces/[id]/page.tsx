@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import axios from "axios";
 import { useToast } from "@/components/ui/use-toast";
 import { useSession } from "next-auth/react";
@@ -47,29 +47,30 @@ const SpacePage: React.FC<SpacePageProps> = ({ params }) => {
   const baseUrl = `${window.location.protocol}//${window.location.host}`;
   const profileUrl = `${baseUrl}/u/${username}/${spaceData?._id}`;
 
-  useEffect(() => {
-    const fetchSpace = async () => {
-      try {
-        const response = await axios.get("/api/get-space", {
-          params: { username, id },
-        });
-        if (response.status === 200) {
-          const data = response.data;
-          if (data.success) {
-            setSpaceData(data.space);
-            console.log(data.space);
-          } else {
-            console.error(data.message);
-          }
+  
+  const fetchSpace = useCallback(async () => {
+    try {
+      const response = await axios.get("/api/get-space", {
+        params: { username, id },
+      });
+      if (response.status === 200) {
+        const data = response.data;
+        if (data.success) {
+          setSpaceData(data.space);
         } else {
-          console.error("Failed to fetch space data");
+          console.error(data.message);
         }
-      } catch (error) {
-        console.error("Error fetching space data:", error);
+      } else {
+        console.error("Failed to fetch space data");
       }
-    };
-    fetchSpace();
+    } catch (error) {
+      console.error("Error fetching space data:", error);
+    }
   }, [username, id]);
+
+  useEffect(() => {
+    fetchSpace();
+  }, [fetchSpace]);
 
   if (!spaceData) {
     return (
@@ -85,8 +86,8 @@ const SpacePage: React.FC<SpacePageProps> = ({ params }) => {
 
   const handleModalClose = () => {
     setIsModalOpen(false);
+    fetchSpace(); // Fetch the updated data when the modal is closed
   };
-
   // Function to delete feedback
   const handleFeedbackDelete = async (id: string) => {
     try {

@@ -102,7 +102,6 @@ const UpdateCard: React.FC<ModalProps> = ({ isOpen, onClose, id }) => {
           title: "Space updated successfully",
           variant: "default",
         });
-        router.push(`/spaces/${data.spaceName}`);
         onClose();
       } else {
         toast({

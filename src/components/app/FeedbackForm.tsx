@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Button } from "../ui/button";
-import { Star, Dot, Loader2 } from "lucide-react";
+import { Star, Dot, Loader2, X } from "lucide-react";  // Import the X icon
 import {
   Form,
   FormControl,
@@ -27,7 +27,6 @@ interface ModalProps {
 }
 
 const FeedbackForm: React.FC<ModalProps> = ({ isOpen, onClose, questions }) => {
-  // Hooks must be called unconditionally
   const [starRating, setStarRating] = useState(0);
   const [hoverRating, setHoverRating] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
@@ -73,6 +72,7 @@ const FeedbackForm: React.FC<ModalProps> = ({ isOpen, onClose, questions }) => {
         title: response.data.message,
         variant: "default",
       });
+      
       form.reset();
       setImage(null);
       setImagePreview("");
@@ -108,7 +108,6 @@ const FeedbackForm: React.FC<ModalProps> = ({ isOpen, onClose, questions }) => {
     }
   };
 
-  // Early return based on isOpen after hooks are set
   if (!isOpen) return null;
 
   return (
@@ -117,7 +116,16 @@ const FeedbackForm: React.FC<ModalProps> = ({ isOpen, onClose, questions }) => {
         className="absolute inset-0 bg-gray-800 opacity-50"
         onClick={onClose}
       ></div>
-      <div className="bg-white z-10 w-1/4 gap-10 p-6 md:pt-4 rounded max-h-[90vh] overflow-y-auto">
+      <div className="relative bg-white z-10 w-1/4 gap-10 p-6 md:pt-4 rounded max-h-[90vh] overflow-y-auto">
+        {/* Close Icon */}
+        <button
+          type="button"
+          className="absolute top-4 right-4 text-gray-600 hover:text-gray-900"
+          onClick={onClose}
+        >
+          <X className="h-6 w-6" />
+        </button>
+
         <h3 className="font-semibold text-xl text-gray-700 mb-6">
           Write text testimonial
         </h3>

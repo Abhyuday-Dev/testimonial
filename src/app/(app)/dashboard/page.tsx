@@ -77,6 +77,8 @@ const Dashboard: React.FC = () => {
     }
   };
 
+
+
   const Tree = () => (
     <img className="text-subtle w-60 dark:invert" src="/tree.svg" alt="Tree" />
   );
@@ -120,7 +122,7 @@ const Dashboard: React.FC = () => {
           </div>
         )}
       </div>
-      <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
+      <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}  />
     </div>
   );
 };
