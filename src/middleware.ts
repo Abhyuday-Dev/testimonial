@@ -1,31 +1,32 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getToken } from 'next-auth/jwt';
-export { default } from 'next-auth/middleware';
 
 export const config = {
-  matcher: ['/dashboard/:path*', '/sign-in', '/sign-up', '/', '/verify/:path*'],
+  matcher: ['/((?!api|_next/static|_next/image|favicon.ico).*)'],
 };
 
 export async function middleware(request: NextRequest) {
   const token = await getToken({ req: request });
-  const url = request.nextUrl;
+  const { pathname } = request.nextUrl;
 
-//   console.log("Token:", token); // Add logging to check token
-//   console.log("URL Pathname:", url.pathname); // Add logging to check URL pathname
+  // public routes that don't require authentication
+  const publicRoutes = ['/sign-in', '/sign-up', '/'];
 
-  if (
-    token &&
-    (url.pathname.startsWith('/sign-in') ||
-      url.pathname.startsWith('/sign-up') ||
-      url.pathname === '/')
-  ) {
-    console.log("Redirecting to /dashboard because user is authenticated");
+  // Redirect authenticated users away from auth pages
+  if (token && (publicRoutes.includes(pathname) || pathname === '/')) {
     return NextResponse.redirect(new URL('/dashboard', request.url));
   }
 
-  if (!token && url.pathname.startsWith('/dashboard')) {
-    console.log("Redirecting to /sign-in because user is not authenticated");
-    return NextResponse.redirect(new URL('/sign-in', request.url));
+  // Allow access to public routes without a token
+  if (!token && publicRoutes.includes(pathname)) {
+    return NextResponse.next();
+  }
+
+  // Redirect to sign-in if there's no token (except for public routes)
+  if (!token) {
+    const signInUrl = new URL('/sign-in', request.url);
+    signInUrl.searchParams.set('callbackUrl', encodeURI(request.url));
+    return NextResponse.redirect(signInUrl);
   }
 
   return NextResponse.next();

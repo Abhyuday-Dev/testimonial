@@ -10,13 +10,7 @@ import { useRouter } from "next/navigation";
 export default function Home() {
   const router = useRouter();
 
-  const handleSignUp = () => {
-    router.push("/sign-up");
-  };
 
-  const handleSignIn = () => {
-    router.push("/sign-in");
-  };
 
   return (
     <div className="flex flex-col min-h-screen">
