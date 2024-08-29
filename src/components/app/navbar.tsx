@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import Link from 'next/link';
 import { useSession, signOut } from 'next-auth/react';
 import { Button } from '../ui/button';
-import { Menu, X } from 'lucide-react'; // Icons for hamburger menu and close button
+import { Menu, MessageSquare, X } from 'lucide-react'; // Icons for hamburger menu and close button
 
 function Navbar() {
   const { data: session } = useSession();
@@ -19,7 +19,8 @@ function Navbar() {
     <nav className="p-4 bg-gray-100 text-white">
       <div className="container mx-auto flex justify-between items-center">
         {/* Logo / Brand */}
-        <a href="/dashboard" className="text-2xl font-bold text-purple-800">
+        <a href="/dashboard" className="text-2xl font-bold flex items-center gap-2 text-gray-600">
+        <MessageSquare className="h-6 w-6" />
           Testimonials
         </a>
 
@@ -68,7 +69,7 @@ function Navbar() {
                 </Button>
               </Link>
               <Link href="/sign-up">
-                <Button className="bg-purple-800 text-white w-full hover:bg-purple-600">
+                <Button className="bg-purple-800 text-white w-full hover:bg-purple-600 rounded-none">
                   Sign Up
                 </Button>
               </Link>
