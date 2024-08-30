@@ -1,28 +1,38 @@
-import React, { useState } from "react";
-import { Card } from "../ui/card";
-import { Button } from "../ui/button";
-import { DeleteIcon, Dot, GripVertical, Loader2, PenIcon, PlusCircleIcon, Trash2 } from "lucide-react";
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "../ui/form";
-import { Input } from "../ui/input";
-import { useForm } from "react-hook-form";
-import { Textarea } from "../ui/textarea";
-import { Switch } from "../ui/switch";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
-import { ApiResponse } from "@/types/ApiResponse";
-import axios, { AxiosError } from "axios";
-import { toast } from "../ui/use-toast";
-import { spaceSchema } from "@/schemas/spaceSchema";
-import { useRouter } from "next/navigation";
+'use client'
+
+import React, { useState } from "react"
+import { useRouter } from "next/navigation"
+import { useForm } from "react-hook-form"
+import { zodResolver } from "@hookform/resolvers/zod"
+import { z } from "zod"
+import axios, { AxiosError } from "axios"
+import { Card } from "@/components/ui/card"
+import { Button } from "@/components/ui/button"
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
+import { Input } from "@/components/ui/input"
+import { Textarea } from "@/components/ui/textarea"
+import { Switch } from "@/components/ui/switch"
+import { toast } from "@/components/ui/use-toast"
+import { DeleteIcon, Dot, GripVertical, Loader2, PenIcon, PlusCircleIcon, Trash2 } from "lucide-react"
+import { spaceSchema } from "@/schemas/spaceSchema"
+import { ApiResponse } from "@/types/ApiResponse"
+import PreviewCard from "./PreviewCard"
 
 interface ModalProps {
-  isOpen: boolean;
-  onClose: () => void;
+  isOpen: boolean
+  onClose: () => void
 }
 
-const Modal: React.FC<ModalProps> = ({ isOpen, onClose }) => {
-  // Always call hooks at the top level
-  const router = useRouter();
+const MAX_QUESTIONS = 4
+
+export default function Modal({ isOpen, onClose }: ModalProps) {
+  const router = useRouter()
+  const [questions, setQuestions] = useState([
+    "Who are you / what are you working on?",
+    "What is the best thing about [our product / service]?",
+    "What is the worst thing about [our product / service]?",
+  ])
+  const [isLoading, setIsLoading] = useState(false)
 
   const form = useForm<z.infer<typeof spaceSchema>>({
     resolver: zodResolver(spaceSchema),
@@ -34,274 +44,216 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose }) => {
       isCollectingStarRating: false,
       theme: false,
     },
-  });
+  })
 
-  const [questions, setQuestions] = useState([
-    "Who are you / what are you working on?",
-    "What is the best thing about [our product / service]",
-    "What is the best thing about [our product / service]",
-  ]);
+  const { watch, handleSubmit, control, reset } = form
+  const spaceTitle = watch("spaceTitle")
+  const spaceMessage = watch("spaceMessage")
+  const isDarkTheme = watch("theme")
 
-  const [isDarkTheme, setIsDarkTheme] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
-
-  // Early return for rendering
-  if (!isOpen) return null;
-
-  // Watch for form values
-  const spaceTitle = form.watch("spaceTitle");
-  const spaceMessage = form.watch("spaceMessage");
+  if (!isOpen) return null
 
   const onSubmit = async (data: z.infer<typeof spaceSchema>) => {
-    setIsLoading(true);
+    setIsLoading(true)
     try {
       const response = await axios.post<ApiResponse>("/api/create-space", {
-        spaceName: data.spaceName,
-        spaceTitle: data.spaceTitle,
-        spaceMessage: data.spaceMessage,
+        ...data,
         spaceQuestions: questions,
-        isCollectingStarRating: data.isCollectingStarRating,
-        theme: data.theme,
-      });
+      })
 
       toast({
         title: response.data.message,
         variant: "default",
-      });
-      form.reset({
-        spaceName: "",
-        spaceTitle: "",
-        spaceMessage: "",
-        questions: [],
-        isCollectingStarRating: false,
-        theme: false,
-      });
-      router.push("/dashboard");
+      })
+      reset()
+      router.push("/dashboard")
     } catch (error) {
-      const axiosError = error as AxiosError<ApiResponse>;
+      const axiosError = error as AxiosError<ApiResponse>
       toast({
         title: "Error",
         description: axiosError.response?.data.message ?? "Failed to send message",
         variant: "destructive",
-      });
+      })
     } finally {
-      setIsLoading(false);
+      setIsLoading(false)
     }
-  };
+  }
 
   const handleAddQuestion = () => {
-    if (questions.length < 4) {
-      setQuestions([...questions, `question ${questions.length + 1}`]);
+    if (questions.length < MAX_QUESTIONS) {
+      setQuestions([...questions, `Question ${questions.length + 1}`])
     }
-  };
+  }
 
   const handleDeleteQuestion = (index: number) => {
-    setQuestions(questions.filter((_, i) => i !== index));
-  };
+    setQuestions(questions.filter((_, i) => i !== index))
+  }
 
   const handleQuestionChange = (index: number, value: string) => {
-    const newQuestions = [...questions];
-    newQuestions[index] = value;
-    setQuestions(newQuestions);
-  };
+    const newQuestions = [...questions]
+    newQuestions[index] = value
+    setQuestions(newQuestions)
+  }
 
   return (
-    <div className="fixed inset-0 flex items-center justify-center z-50 h-full p-8">
-      <div
-        className="absolute inset-0 bg-gray-800 opacity-50"
-        onClick={onClose}
-      ></div>
-      <div className="relative bg-white z-10 w-full md:w-4/6 max-h-[90vh] overflow-y-auto grid grid-cols-1 md:grid-cols-5 gap-10 p-10 md:pt-16 rounded">
-        <div className="col-span-1 md:col-span-2">
-          <Card
-            className={`p-4 pt-10 pb-8 ${isDarkTheme ? "bg-[#25282c]" : "bg-white"}`}
-          >
-            <div className="flex flex-col justify-center items-center">
-              <div className="mb-6">
-                <img
-                  src="https://img.icons8.com/?size=100&id=IIX4dzpCp0YI&format=png&color=000000"
-                  alt=""
-                />
-              </div>
-              <h1
-                className={` text-sm md:text-3xl font-bold mb-4 ${
-                  isDarkTheme ? "text-gray-200" : "text-gray-700"
-                }`}
-              >
-                {spaceTitle || "Header goes here..."}
-              </h1>
-              <p
-                className={`text-sm w-full text-center mb-8 ${
-                  isDarkTheme ? "text-gray-200" : "text-gray-500"
-                }`}
-              >
-                {spaceMessage || "Your custom message goes here..."}
-              </p>
-            </div>
-            <div className="flex flex-col items-start justify-start ml-2 mb-8">
-              <h2
-                className={`text-xl font-semibold ${
-                  isDarkTheme ? "text-gray-200" : "text-gray-800"
-                }`}
-              >
-                Questions
-              </h2>
-              <ul className="text-gray-700">
-                {questions.map((question, index) => (
-                  <li
-                    className={`text-sm flex text-semibold ${
-                      isDarkTheme ? "text-gray-300" : "text-gray-700"
-                    }`}
-                    key={index}
-                  >
-                    <Dot />
-                    {question}
-                  </li>
-                ))}
-              </ul>
-            </div>
-            <Button className="w-full mb-2 bg-purple-800 hover:bg-purple-800">
-              <PenIcon className="pr-3" size={10} /> Send in Text
-            </Button>
-          </Card>
-        </div>
-        <div className="col-span-1 md:col-span-3">
-          <h1 className="text-center text-3xl font-bold mb-4">Create a new Space</h1>
-          <h3 className="text-gray-600 text-center mb-10">
-            After the Space is created, it will generate a dedicated page for collecting testimonials.
-          </h3>
-          <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-              <FormField
-                control={form.control}
-                name="spaceName"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Space Name</FormLabel>
-                    <FormControl>
-                      <Input {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                name="spaceTitle"
-                control={form.control}
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Space Title</FormLabel>
-                    <FormControl>
-                      <Input {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                name="spaceMessage"
-                control={form.control}
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Space Message</FormLabel>
-                    <FormControl>
-                      <Textarea {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <div>
-                <h2 className="text-lg font-semibold mb-2">Questions</h2>
-
-                {questions.map((question, index) => (
-                  <div key={index} className="flex items-center mb-2">
-                    <GripVertical />
-                    <Input
-                      value={question}
-                      onChange={(e) => handleQuestionChange(index, e.target.value)}
-                      className="mr-2"
-                    />
-                    <div
-                      onClick={() => handleDeleteQuestion(index)}
-                      className="hover:text-gray-600 cursor-pointer"
-                    >
-                      <Trash2
-                        size={20}
-                        color="gray"
-                        className="transition-colors duration-200"
-                      />
-                    </div>
-                  </div>
-                ))}
-                {questions.length < 4 && (
-                  <div
-                    className="flex gap-2 text-sm cursor-pointer "
-                    onClick={handleAddQuestion}
-                  >
-                    <PlusCircleIcon size={18} /> Add one (upto 4)
-                  </div>
-                )}
-              </div>
-
-              <div className="flex gap-12 items-center">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-8">
+      <div className="absolute inset-0 bg-gray-800 bg-opacity-50" onClick={onClose} />
+      <div className="relative z-10 w-full max-h-[90vh] overflow-y-auto bg-white rounded-lg shadow-xl sm:max-w-4xl">
+        <div className="grid grid-cols-1 gap-6 p-6 md:grid-cols-5 md:gap-10 md:p-10">
+          <PreviewCard
+            spaceTitle={spaceTitle}
+            spaceMessage={spaceMessage}
+            questions={questions}
+            isDarkTheme={isDarkTheme}
+          />
+          <div className="col-span-1 md:col-span-3">
+            <h1 className="mb-4 text-3xl font-bold text-center">Create a new Space</h1>
+            <h3 className="mb-8 text-gray-600 text-center">
+              After the Space is created, it will generate a dedicated page for collecting testimonials.
+            </h3>
+            <Form {...form}>
+              <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
                 <FormField
-                  control={form.control}
-                  name="isCollectingStarRating"
+                  control={control}
+                  name="spaceName"
                   render={({ field }) => (
-                    <FormItem className="flex flex-col ">
-                      <div className="text-sm">Collect star ratings</div>
+                    <FormItem>
+                      <FormLabel>Space Name</FormLabel>
                       <FormControl>
-                        <Switch
-                          checked={field.value}
-                          onCheckedChange={field.onChange}
-                        />
+                        <Input {...field} />
                       </FormControl>
+                      <FormMessage />
                     </FormItem>
                   )}
                 />
                 <FormField
-                  control={form.control}
-                  name="theme"
+                  name="spaceTitle"
+                  control={control}
                   render={({ field }) => (
-                    <FormItem className="flex flex-col ">
-                      <div className="text-sm">Choose a theme</div>
+                    <FormItem>
+                      <FormLabel>Space Title</FormLabel>
                       <FormControl>
-                        <Switch
-                          checked={isDarkTheme}
-                          onCheckedChange={(value) => {
-                            field.onChange(value);
-                            setIsDarkTheme(value);
-                          }}
-                        />
+                        <Input {...field} />
                       </FormControl>
+                      <FormMessage />
                     </FormItem>
                   )}
                 />
-              </div>
-
-              <div>
-                {isLoading ? (
-                  <Button disabled className="w-full">
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    Please wait
-                  </Button>
-                ) : (
-                  <Button
-                    type="submit"
-                    disabled={isLoading}
-                    className="w-full bg-purple-800 hover:bg-purple-700"
-                  >
-                    Create New Space
-                  </Button>
-                )}
-              </div>
-            </form>
-          </Form>
+                <FormField
+                  name="spaceMessage"
+                  control={control}
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Space Message</FormLabel>
+                      <FormControl>
+                        <Textarea {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <QuestionsSection
+                  questions={questions}
+                  onAddQuestion={handleAddQuestion}
+                  onDeleteQuestion={handleDeleteQuestion}
+                  onQuestionChange={handleQuestionChange}
+                />
+                <div className="flex gap-12 items-center">
+                  <FormField
+                    control={control}
+                    name="isCollectingStarRating"
+                    render={({ field }) => (
+                      <FormItem className="flex flex-col">
+                        <div className="text-sm">Collect star ratings</div>
+                        <FormControl>
+                          <Switch checked={field.value} onCheckedChange={field.onChange} />
+                        </FormControl>
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={control}
+                    name="theme"
+                    render={({ field }) => (
+                      <FormItem className="flex flex-col">
+                        <div className="text-sm">Choose a theme</div>
+                        <FormControl>
+                          <Switch checked={field.value} onCheckedChange={field.onChange} />
+                        </FormControl>
+                      </FormItem>
+                    )}
+                  />
+                </div>
+                <Button
+                  type="submit"
+                  disabled={isLoading}
+                  className="w-full bg-purple-800 hover:bg-purple-700"
+                >
+                  {isLoading ? (
+                    <>
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      Please wait
+                    </>
+                  ) : (
+                    "Create New Space"
+                  )}
+                </Button>
+              </form>
+            </Form>
+          </div>
         </div>
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default Modal;
+
+interface QuestionsSectionProps {
+  questions: string[]
+  onAddQuestion: () => void
+  onDeleteQuestion: (index: number) => void
+  onQuestionChange: (index: number, value: string) => void
+}
+
+function QuestionsSection({
+  questions,
+  onAddQuestion,
+  onDeleteQuestion,
+  onQuestionChange,
+}: QuestionsSectionProps) {
+  return (
+    <div>
+      <h2 className="text-lg font-semibold mb-2">Questions</h2>
+      {questions.map((question, index) => (
+        <div key={index} className="flex items-center mb-2">
+          <GripVertical className="mr-2 text-gray-400" />
+          <Input
+            value={question}
+            onChange={(e) => onQuestionChange(index, e.target.value)}
+            className="mr-2"
+          />
+          <Button
+            type="button"
+            variant="ghost"
+            size="icon"
+            onClick={() => onDeleteQuestion(index)}
+            aria-label={`Delete question ${index + 1}`}
+          >
+            <Trash2 className="h-4 w-4 text-gray-500 hover:text-gray-700" />
+          </Button>
+        </div>
+      ))}
+      {questions.length < MAX_QUESTIONS && (
+        <Button
+          type="button"
+          variant="outline"
+          size="sm"
+          onClick={onAddQuestion}
+          className="mt-2"
+        >
+          <PlusCircleIcon className="mr-2 h-4 w-4" /> Add question (up to {MAX_QUESTIONS})
+        </Button>
+      )}
+    </div>
+  )
+}

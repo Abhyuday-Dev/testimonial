@@ -34,32 +34,7 @@ export default function SignInForm() {
     },
   });
 
-  // const onSubmit = async (data: z.infer<typeof signInSchema>) => {
-  //   const result = await signIn('credentials', {
-  //     redirect: false,
-  //     email: data.email,
-  //     password: data.password,
-  //   });
-  //   console.log(result);
-
-  //   if (result?.error) {
-  //     if (result.error === 'CredentialsSignin') {
-  //       toast({
-  //         title: 'Login Failed',
-  //         description: 'Incorrect username or password',
-  //         variant: 'destructive',
-  //       });
-  //     } else {
-  //       toast({
-  //         title: 'Error',
-  //         description: result.error,
-  //         variant: 'destructive',
-  //       });
-  //     }
-  //   } else if (result?.url) {
-  //     router.replace('/'); 
-  //   }
-  // };
+ 
   const onSubmit = async (data: z.infer<typeof signInSchema> ) => {
     const result = await signIn("credentials", {
       redirect: false,
@@ -75,20 +50,20 @@ export default function SignInForm() {
         variant: "destructive",
       });
     } else {
-      // Redirect or handle successful sign-in
+  
       toast({
         title: "Signed In",
         description: "You have successfully signed in.",
       });
-      router.push("/"); // Redirect to homepage or desired route
+      router.push("/"); // Redirect to homepage
     }
   };
 
   const GoogleIcon = () => (
     <img
-      className="text-subtle mr-2 h-4 w-4 dark:invert"
-      src="/google-icon.svg"
-      alt=""
+      className="text-subtle mr-2 h-6 w-6 dark:invert"
+      src="https://cdn1.iconfinder.com/data/icons/google-s-logo/150/Google_Icons-09-512.png"
+      alt="test"
     />
   );
 

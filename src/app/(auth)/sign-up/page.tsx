@@ -56,9 +56,12 @@ export default function SignUpForm() {
       setIsSubmitting(false);
     }
   };
-
   const GoogleIcon = () => (
-    <img className="text-subtle mr-2 h-6 w-6 dark:invert" src="/google-icon.svg" alt="" />
+    <img
+      className="text-subtle mr-2 h-6 w-6 dark:invert"
+      src="https://cdn1.iconfinder.com/data/icons/google-s-logo/150/Google_Icons-09-512.png"
+      alt="google icon"
+    />
   );
 
   const handleGoogleSignIn = async () => {
