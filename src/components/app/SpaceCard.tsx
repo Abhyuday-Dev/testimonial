@@ -31,7 +31,8 @@ interface SpaceCardProps {
   imageUrl: string;
   spaceName: string;
   id: string; // Use id for deletion
-  onDelete: (id: string) => void; // Use id for deletion
+  onDelete: (id: string) => void;
+  refreshData:()=>void; 
 }
 
 export const SpaceCard: React.FC<SpaceCardProps> = ({
@@ -41,6 +42,7 @@ export const SpaceCard: React.FC<SpaceCardProps> = ({
   spaceName,
   id,
   onDelete,
+  refreshData
 }) => {
 
   const {data:session}=useSession();
@@ -139,6 +141,7 @@ export const SpaceCard: React.FC<SpaceCardProps> = ({
         isOpen={isModalOpen}
         onClose={handleModalClose}
         id={id}
+        refreshData={refreshData}
       />
       </div>
     </Card>

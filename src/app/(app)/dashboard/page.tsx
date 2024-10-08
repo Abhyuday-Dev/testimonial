@@ -112,6 +112,7 @@ const Dashboard: React.FC = () => {
                 imageUrl="https://static.vecteezy.com/system/resources/previews/006/801/375/original/testimonial-illustration-exclusive-design-inspiration-vector.jpg"
                 spaceName={space.spaceName}
                 onDelete={handleDelete}
+                refreshData={()=>fetchSpaces()}
               />
             ))}
           </div>

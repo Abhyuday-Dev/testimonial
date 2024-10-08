@@ -206,6 +206,7 @@ const SpacePage: React.FC<SpacePageProps> = ({ params }) => {
         isOpen={isModalOpen}
         onClose={handleModalClose}
         id={spaceData._id}
+        refreshData={()=>console.log}
       />
     </div>
   );

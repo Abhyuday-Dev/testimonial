@@ -27,9 +27,10 @@ interface ModalProps {
   isOpen: boolean;
   onClose: () => void;
   id: string;
+  refreshData: () => void;
 }
 
-const UpdateCard: React.FC<ModalProps> = ({ isOpen, onClose, id }) => {
+const UpdateCard: React.FC<ModalProps> = ({ isOpen, onClose, id,refreshData }) => {
   const form = useForm<z.infer<typeof spaceSchema>>({
     resolver: zodResolver(spaceSchema),
   });
@@ -103,6 +104,8 @@ const UpdateCard: React.FC<ModalProps> = ({ isOpen, onClose, id }) => {
           variant: "default",
         });
         onClose();
+        refreshData();
+
       } else {
         toast({
           title: "Error",
