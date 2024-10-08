@@ -9,16 +9,19 @@ export async function middleware(request: NextRequest) {
   const token = await getToken({ req: request });
   const { pathname } = request.nextUrl;
 
-  // public routes that don't require authentication
-  const publicRoutes = ['/sign-in', '/sign-up', '/'];
+  // Public routes that don't require authentication
+  const publicRoutes = ['/sign-in', '/sign-up', '/', '/u'];
+
+  // Allow access to dynamic user routes like /u/[username]/[spaceid] without authentication
+  const isPublicDynamicUserRoute = pathname.startsWith('/u/') && pathname.split('/').length === 4;
 
   // Redirect authenticated users away from auth pages
   if (token && (publicRoutes.includes(pathname) || pathname === '/')) {
     return NextResponse.redirect(new URL('/dashboard', request.url));
   }
 
-  // Allow access to public routes without a token
-  if (!token && publicRoutes.includes(pathname)) {
+  // Allow access to public routes without a token, including dynamic user routes
+  if (!token && (publicRoutes.includes(pathname) || isPublicDynamicUserRoute)) {
     return NextResponse.next();
   }
 
