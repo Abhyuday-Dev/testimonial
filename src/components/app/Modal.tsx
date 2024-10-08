@@ -21,11 +21,12 @@ import PreviewCard from "./PreviewCard"
 interface ModalProps {
   isOpen: boolean
   onClose: () => void
+  refreshData:()=>void
 }
 
 const MAX_QUESTIONS = 4
 
-export default function Modal({ isOpen, onClose }: ModalProps) {
+export default function Modal({ isOpen, onClose,refreshData }: ModalProps) {
   const router = useRouter()
   const [questions, setQuestions] = useState([
     "Who are you / what are you working on?",
@@ -66,7 +67,8 @@ export default function Modal({ isOpen, onClose }: ModalProps) {
         variant: "default",
       })
       reset()
-      router.push("/dashboard")
+      onClose()
+      refreshData();
     } catch (error) {
       const axiosError = error as AxiosError<ApiResponse>
       toast({

@@ -122,7 +122,7 @@ const Dashboard: React.FC = () => {
           </div>
         )}
       </div>
-      <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}  />
+      <Modal refreshData={()=>fetchSpaces()} isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}  />
     </div>
   );
 };

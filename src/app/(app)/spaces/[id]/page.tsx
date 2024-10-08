@@ -167,7 +167,7 @@ const SpacePage: React.FC<SpacePageProps> = ({ params }) => {
             <h2 className="text-3xl font-bold">{spaceData?.spaceName}</h2>
             <p className="text-sm text-gray-500">
               Space Public URL :{" "}
-              <a href={profileUrl} className="underline">
+              <a href={profileUrl} className="underline" target="_blank">
                 {profileUrl}
               </a>
             </p>
